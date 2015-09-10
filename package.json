@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "Synology Git Repo Manager",
   "main": "index.js",
+  "repository": "https://github.com/ffffranklin/scotty.git",
   "scripts": {
     "test": "test"
   },
