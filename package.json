@@ -15,5 +15,8 @@
     "node"
   ],
   "author": "Franklin Clark",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^1.2.0"
+  }
 }
