@@ -1,0 +1,11 @@
+*.DS_Store
+*~
+*#
+.#*
+\#*#
+.*.sw[a-z]
+*.un~
+
+/.idea
+/.sass-cache
+/node_modules

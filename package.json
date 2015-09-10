@@ -1,0 +1,18 @@
+{
+  "name": "scotty",
+  "version": "0.0.1",
+  "description": "Synology Git Repo Manager",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "keywords": [
+    "synology",
+    "diskstation",
+    "git",
+    "repository",
+    "node"
+  ],
+  "author": "Franklin Clark",
+  "license": "ISC"
+}
