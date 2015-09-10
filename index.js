@@ -12,7 +12,7 @@ var envNotConfigured = (function listMissingConfig(env) {
   ];
   required.forEach(function(name){
     if (!env.hasOwnProperty(name)) {
-      result.push(name)
+      result.push(name);
     }
   });
   return result;
@@ -53,7 +53,7 @@ if (envNotConfigured.length > 0) {
   console.error('Environment variables not set');
   envNotConfigured.forEach(function logMissingConfig(name) {
     console.log(' - Missing %s', name);
-  })
+  });
 }
 
 if (args.length > 0) {
