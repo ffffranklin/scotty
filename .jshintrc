@@ -12,11 +12,11 @@
   "noarg": true,
   "noempty": true,
   "nonew": true,
-  "globals": [
-    "console",
-    "process"
-  ],
   "predef": [
+    "console",
+    "process",
+    "require",
+
     "$",
     "jQuery",
 
