@@ -8,4 +8,6 @@
 
 /.idea
 /.sass-cache
+/.env
 /node_modules
+
