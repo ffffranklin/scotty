@@ -9,25 +9,25 @@ var envNotConfigured = (function listMissingConfig(env) {
     'DS_HOST_SSH_PORT',
     'DS_PRIMARY_USER',
     'DS_GIT_REPO_PATH'
-  ]
+  ];
   required.forEach(function(name){
     if (!env.hasOwnProperty(name)) {
       result.push(name)
     }
-  })
-  return result 
-})(process.env)
+  });
+  return result;
+})(process.env);
 
 var scotty = function scotty() {
 
   var methods =  {
-    'list': function list(options) {
-      var child_process = require('child_process');
+    'list': function list() {
+      var childProcess = require('child_process');
       var host = process.env.DS_HOST;      
       var port = process.env.DS_HOST_SSH_PORT;
       var repoPath = process.env.DS_GIT_REPO_PATH;
       var command = 'ssh root@' + host + ' -p' + port + ' ls ' + repoPath;
-      child_process.exec(command, function (err, data) {
+      childProcess.exec(command, function (err, data) {
         console.log(data);
       });
       
@@ -38,7 +38,7 @@ var scotty = function scotty() {
     if (methods.hasOwnProperty(method)) {
       methods[method].call(this, args);
     } else {
-      console.error('Method "%s" does not exist', method) 
+      console.error('Method "%s" does not exist', method);
     }
   }
 
@@ -57,9 +57,9 @@ if (envNotConfigured.length > 0) {
 }
 
 if (args.length > 0) {
-  scotty().run(args[0], args.slice(1))
+  scotty().run(args[0], args.slice(1));
 } else {
-  console.log('No command provided')
+  console.log('No command provided');
 }
 
-module.exports = scotty
+module.exports = scotty;
