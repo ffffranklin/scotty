@@ -43,7 +43,8 @@ var scotty = function scotty() {
       // need to post validate the cloned repo
       var command1 = 'git clone --bare ' + localRepoPath + ' ' + cloneRepoPath;
       var command2 = 'scp -r -P' + port + ' ' + cloneRepoPath + ' root@'+host+':'+repoPath
-      var command3 = 'rm -rf ' + cloneRepoPath;
+      var command3 = 'ssh -p' + port + ' root@' + host + ' chmod -R g+rwX' + repoPath + '/' + cloneRepoPath
+      var command4 = 'rm -rf ' + cloneRepoPath;
 
       console.log('Cloning repo to %', cloneRepoPath);
 
@@ -57,10 +58,17 @@ var scotty = function scotty() {
 
           console.log(data);
 
-          console.log('Cleaning up');
+          console.log('Fixing permissions');
 
           childProcess.exec(command3, function (err, data) {
+
             console.log(data);
+
+            console.log('Cleaning up');
+
+            childProcess.exec(command4, function (err, data) {
+              console.log(data);
+            });
           });
 
         });
