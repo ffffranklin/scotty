@@ -2,6 +2,11 @@ require('dotenv').load({silent: true});
 
 var childProcess = require('child_process');
 var args = process.argv.slice(2);
+var env = {
+  host: process.env.DS_HOST,
+  port: process.env.DS_HOST_SSH_PORT,
+  repoPath: process.env.DS_GIT_REPO_PATH
+};
 
 var envNotConfigured = (function listMissingConfig(env) {
   var result = [];
@@ -23,10 +28,7 @@ var scotty = function scotty() {
 
   var methods =  {
     'list': function list() {
-      var host = process.env.DS_HOST;      
-      var port = process.env.DS_HOST_SSH_PORT;
-      var repoPath = process.env.DS_GIT_REPO_PATH;
-      var command = 'ssh root@' + host + ' -p' + port + ' ls ' + repoPath;
+      var command = 'ssh root@' + env.host + ' -p' + env.port + ' ls ' + env.repoPath;
       childProcess.exec(command, function (err, data) {
         console.log(data);
       });
@@ -64,8 +66,6 @@ var scotty = function scotty() {
         });
 
       });
-
-
 
     }
   }
