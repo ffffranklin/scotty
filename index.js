@@ -34,7 +34,7 @@ var scotty = function scotty() {
       });
     },
     'add': function add (localRepoPath, hostRepoName) {
-      var cloneRepoPath = hostRepoName + '.git'
+      var cloneRepoPath = hostRepoName + '.git';
       var host = process.env.DS_HOST;      
       var port = process.env.DS_HOST_SSH_PORT;
       var repoPath = process.env.DS_GIT_REPO_PATH;
@@ -42,7 +42,7 @@ var scotty = function scotty() {
       // need to validate that the local repo path points to a git repo
       // need to post validate the cloned repo
       var command1 = 'git clone --bare ' + localRepoPath + ' ' + cloneRepoPath;
-      var command2 = 'scp -r -P' + port + ' ' + cloneRepoPath + ' root@'+host+':'+repoPath
+      var command2 = 'scp -r -P' + port + ' ' + cloneRepoPath + ' root@' + host + ':' + repoPath;
       var command3 = 'ssh -p' + port + ' root@' + host + ' chmod -R g+rwX' + repoPath + '/' + cloneRepoPath
       var command4 = 'rm -rf ' + cloneRepoPath;
 
