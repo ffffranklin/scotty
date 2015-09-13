@@ -5,7 +5,7 @@ require('dotenv').load({silent: true});
 var Promise = require('bluebird');
 var argv = require('minimist')(process.argv.slice(2));
 var exec = require('child_process').exec;
-var args = process.argv.slice(2);
+var format = require('util').format;
 var env = {
   host: process.env.DS_HOST,
   port: process.env.DS_HOST_SSH_PORT,
@@ -38,29 +38,30 @@ var scotty = function scotty() {
         exec(cmd, function (err, data) { console.log(data); res(); });
         return new Promise(function (resolve, reject) { res = resolve });
       }
-  }
+  };
+
   var repoManager = {
     cloneRepo: function cloneRepo (opts) {
-      var command = 'git clone --bare ' + opts.localRepoPath + ' ' + opts.cloneRepoPath;
+      var command = format('git clone --bare %s %s', opts.localRepoPath, opts.cloneRepoPath);
       return runCommand(command, 'Cloning repo to %', opts.cloneRepoPath)
     },
     copyRepoToServer: function copyRepoToServer (opts) {
-      var command = 'scp -r -P' + env.port + ' ' + opts.cloneRepoPath + ' root@' + env.host + ':' + env.repoPath;
+      var command = format('scp -r -P%d %s root@%s:%s', env.port, opts.cloneRepoPath, env.host, env.repoPath);
       return runCommand(command, 'Pushing repo to server')
     },
     makeRemoteServerWriteable: function makeRemoteServerWriteable (opts) {
-      var command = 'ssh -p' + env.port + ' root@' + env.host + ' chmod -R g+rwX' + env.repoPath + '/' + opts.cloneRepoPath;
+      var command = format('ssh -p%d root@%s chmod -R g+rwX%s/%s', env.port, env.host, env.repoPath,  opts.cloneRepoPath);
       return runCommand(command, 'Fixing permissions')
     },
     cleanUp: function cleanup (opts) {
-      var command = 'rm -rf ' + opts.cloneRepoPath;
+      var command = format('rm -rf %s', opts.cloneRepoPath);
       return runCommand(command, 'Cleaning Up')
     }
   };
 
   var methods =  {
     'list': function list() {
-      var command = 'ssh root@' + env.host + ' -p' + env.port + ' ls ' + env.repoPath;
+      var command = format('ssh root@%s -p%d ls %s', env.host, env.port, env.repoPath);
       exec(command, function (err, data) {
         console.log(data);
       });
@@ -112,4 +113,3 @@ if (argv._.length > 0) {
 } else {
   console.log('scotty: No command provided');
 }
-
