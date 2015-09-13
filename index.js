@@ -1,3 +1,5 @@
+#! /usr/bin/env node
+
 require('dotenv').load({silent: true});
 
 var childProcess = require('child_process');

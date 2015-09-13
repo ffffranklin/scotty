@@ -16,6 +16,10 @@
   ],
   "author": "Franklin Clark",
   "license": "ISC",
+  "preferGlobal": true,
+  "bin": {
+    "scotty": "index.js"
+  },
   "dependencies": {
     "dotenv": "^1.2.0"
   },
