@@ -18,5 +18,11 @@
   "license": "ISC",
   "dependencies": {
     "dotenv": "^1.2.0"
+  },
+  "devDependencies": {
+    "faucet": "0.0.1",
+    "gulp": "^3.9.0",
+    "gulp-shell": "^0.4.3",
+    "tape": "^4.2.0"
   }
 }
