@@ -21,11 +21,16 @@
     "scotty": "index.js"
   },
   "dependencies": {
-    "dotenv": "^1.2.0"
+    "bluebird": "^2.10.0",
+    "dotenv": "^1.2.0",
+    "minimist": "^1.2.0"
   },
   "devDependencies": {
+    "eslint": "^1.4.1",
+    "eslint-config-defaults": "^6.0.0",
     "faucet": "0.0.1",
     "gulp": "^3.9.0",
+    "gulp-eslint": "^1.0.0",
     "gulp-shell": "^0.4.3",
     "rewire": "^2.3.4",
     "tape": "^4.2.0"

@@ -1,9 +1,16 @@
 #! /usr/bin/env node
 
+'use strict';
+
 require('dotenv').load({silent: true});
 
+var Promise = require('bluebird');
+var argv = require('minimist')(process.argv.slice(2));
 var exec = require('child_process').exec;
-var args = process.argv.slice(2);
+var format = require('util').format;
+var log = function log() {
+  return console.log.apply(null, arguments);
+};
 var env = {
   host: process.env.DS_HOST,
   port: process.env.DS_HOST_SSH_PORT,
@@ -18,7 +25,8 @@ var envNotConfigured = (function listMissingConfig(env) {
     'DS_PRIMARY_USER',
     'DS_GIT_REPO_PATH'
   ];
-  required.forEach(function(name){
+
+  required.forEach(function(name) {
     if (!env.hasOwnProperty(name)) {
       result.push(name);
     }
@@ -28,85 +36,111 @@ var envNotConfigured = (function listMissingConfig(env) {
 
 var scotty = function scotty() {
 
+  var runCommand = function runCommand(cmd, msg) {
+    return function() {
+      var res;
+
+      log(msg);
+      log('ran: %s', cmd);
+      exec(cmd, function(err, data) { log(data); res(); });
+      return new Promise(function(resolve) { res = resolve; });
+    };
+  };
+
+  var repoManager = {
+    cloneRepo: function cloneRepo(opts) {
+      var srcPath = opts.localRepoPath;
+      var destPath = opts.cloneRepoPath;
+      var command = format('git clone --bare %s %s', srcPath, destPath);
+
+      return runCommand(command, 'Cloning repo to %', destPath);
+    },
+    copyRepoToServer: function copyRepoToServer(opts) {
+      var cmd = 'scp -r -P%d %s root@%s:%s';
+      var port = env.port;
+      var src = opts.cloneRepoPath;
+      var host = env.host;
+      var repoPath = env.repoPath;
+      var command = format(cmd, port, src, host, repoPath);
+
+      return runCommand(command, 'Pushing repo to server');
+    },
+    makeRemoteServerWriteable: function makeRemoteServerWriteable(opts) {
+      var cmd = 'ssh -p%d root@%s chmod -R g+rwX %s';
+      var port = env.port;
+      var host = env.host;
+      var targetPath = format('%s/%s', env.repoPath, opts.cloneRepoPath);
+      var command = format(cmd, port, host, targetPath);
+
+      return runCommand(command, 'Fixing permissions');
+    },
+    cleanUp: function cleanup(opts) {
+      var command = format('rm -rf %s', opts.cloneRepoPath);
+
+      return runCommand(command, 'Cleaning Up');
+    }
+  };
+
   var methods =  {
     'list': function list() {
-      var command = 'ssh root@' + env.host + ' -p' + env.port + ' ls ' + env.repoPath;
-      exec(command, function (err, data) {
-        console.log(data);
+      var cmd = 'ssh root@%s -p%d ls %s';
+      var host = env.host;
+      var port = env.port;
+      var targetPath = env.repoPath;
+      var command = format(cmd, host, port, targetPath);
+
+      exec(command, function(err, data) {
+        log(data);
       });
     },
-    'add': function add (localRepoPath, hostRepoName) {
-      var cloneRepoPath = hostRepoName + '.git';
-      var host = process.env.DS_HOST;      
-      var port = process.env.DS_HOST_SSH_PORT;
-      var repoPath = process.env.DS_GIT_REPO_PATH;
+    'add': function add(localRepoPath, hostRepoName) {
       // need to validate local repo path
       // need to validate that the local repo path points to a git repo
       // need to post validate the cloned repo
-      var command1 = 'git clone --bare ' + localRepoPath + ' ' + cloneRepoPath;
-      var command2 = 'scp -r -P' + port + ' ' + cloneRepoPath + ' root@' + host + ':' + repoPath;
-      var command3 = 'ssh -p' + port + ' root@' + host + ' chmod -R g+rwX' + repoPath + '/' + cloneRepoPath
-      var command4 = 'rm -rf ' + cloneRepoPath;
+      var opts = {
+        cloneRepoPath: hostRepoName + '.git',
+        localRepoPath: localRepoPath,
+        hostRepoName: hostRepoName
+      };
 
-      console.log('Cloning repo to %', cloneRepoPath);
-
-      exec(command1, function (err, data) {
-
-        console.log(data);
-
-        console.log('Pushing repo to server');
-
-        exec(command2, function (err, data) {
-
-          console.log(data);
-
-          console.log('Fixing permissions');
-
-          exec(command3, function (err, data) {
-
-            console.log(data);
-
-            console.log('Cleaning up');
-
-            exec(command4, function (err, data) {
-              console.log(data);
-            });
-          });
-
-        });
-
-      });
-
+      Promise.resolve().then(
+        repoManager.cloneRepo(opts)
+      ).then(
+        repoManager.copyRepoToServer(opts)
+      ).then(
+        repoManager.makeRemoteServerWriteable(opts)
+      ).then(
+        repoManager.cleanUp(opts)
+      );
     }
-  }
+  };
 
-  var run = function (method, args) {
+  var run = function(method, args) {
     if (methods.hasOwnProperty(method)) {
-      methods[method].apply(this, args);
+      methods[method].apply(null, args);
     } else {
-      console.error('Method "%s" does not exist', method);
+      log('scotty: FATAL_ERROR: Method "%s" does not exist', method);
     }
-  }
+  };
 
   return {
     __methods: methods,
+    __repoManager: repoManager,
     run: run
-  }
-  
-}
+  };
+};
 
 var inst = module.exports = scotty();
 
 if (envNotConfigured.length > 0) {
-  console.error('Environment variables not set');
+  log('scotty: FATAL_ERROR: Environment variables not set');
   envNotConfigured.forEach(function logMissingConfig(name) {
-    console.log(' - Missing %s', name);
+    log(' - Missing %s', name);
   });
 }
 
-if (args.length > 0) {
-  inst.run(args[0], args.slice(1));
+if (argv._.length > 0) {
+  inst.run(argv._[0], argv._.slice(1));
 } else {
-  console.log('No command provided');
+  log('scotty: No command provided');
 }
-
