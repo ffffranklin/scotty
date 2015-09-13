@@ -29,46 +29,31 @@ var envNotConfigured = (function listMissingConfig(env) {
 
 var scotty = function scotty() {
 
+  var runCommand = function runCommand (cmd, msg) {
+      return function () {
+        var res;
+        console.log(msg);
+        console.log('ran: %s', cmd);
+        exec(cmd, function (err, data) { console.log(data); res(); });
+        return new Promise(function (resolve, reject) { res = resolve });
+      }
+  }
   var repoManager = {
     cloneRepo: function cloneRepo (opts) {
       var command = 'git clone --bare ' + opts.localRepoPath + ' ' + opts.cloneRepoPath;
-      return function () {
-        var res;
-        console.log('Cloning repo to %', opts.cloneRepoPath);
-        console.log('running: %s', command);
-        exec(command, function (err, data) { console.log(data); res(); });
-        return new Promise(function (resolve, reject) { res = resolve });
-      };
+      return runCommand(command, 'Cloning repo to %', opts.cloneRepoPath)
     },
     copyRepoToServer: function copyRepoToServer (opts) {
       var command = 'scp -r -P' + env.port + ' ' + opts.cloneRepoPath + ' root@' + env.host + ':' + env.repoPath;
-      return function () {
-        var res;
-        console.log('Pushing repo to server');
-        console.log('running: %s', command);
-        exec(command, function (err, data) { console.log(data); res();});
-        return new Promise(function (resolve, reject) { res = resolve });
-      };
+      return runCommand(command, 'Pushing repo to server')
     },
     makeRemoteServerWriteable: function makeRemoteServerWriteable (opts) {
       var command = 'ssh -p' + env.port + ' root@' + env.host + ' chmod -R g+rwX' + env.repoPath + '/' + opts.cloneRepoPath;
-      return function () {
-        var res;
-        console.log('Fixing permissions');
-        console.log('running: %s', command);
-        exec(command, function (err, data) { console.log(data); res();});
-        return new Promise(function (resolve, reject) { res = resolve });
-      };
+      return runCommand(command, 'Fixing permissions')
     },
     cleanUp: function cleanup (opts) {
       var command = 'rm -rf ' + opts.cloneRepoPath;
-      return function () {
-        var res;
-        console.log('Cleaning Up');
-        console.log('running: %s', command);
-        exec(command, function (err, data) { console.log(data); res();});
-        return new Promise(function (resolve, reject) { res = resolve });
-      };
+      return runCommand(command, 'Cleaning Up')
     }
   };
 
