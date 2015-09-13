@@ -7,7 +7,7 @@ gulp.task('test', shell.task([
   'tape test/**/*.js | faucet',
 ]));
 
-gulp.task('autotest', ['test'], function() {
+gulp.task('watch', ['test'], function() {
   gulp.watch(['index.js', 'test/**/*.js'], ['test']);
 });
 
