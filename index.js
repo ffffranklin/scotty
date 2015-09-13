@@ -1,6 +1,8 @@
+#! /usr/bin/env node
+
 require('dotenv').load({silent: true});
 
-var childProcess = require('child_process');
+var exec = require('child_process').exec;
 var args = process.argv.slice(2);
 var env = {
   host: process.env.DS_HOST,
@@ -29,7 +31,7 @@ var scotty = function scotty() {
   var methods =  {
     'list': function list() {
       var command = 'ssh root@' + env.host + ' -p' + env.port + ' ls ' + env.repoPath;
-      childProcess.exec(command, function (err, data) {
+      exec(command, function (err, data) {
         console.log(data);
       });
     },
@@ -48,25 +50,25 @@ var scotty = function scotty() {
 
       console.log('Cloning repo to %', cloneRepoPath);
 
-      childProcess.exec(command1, function (err, data) {
+      exec(command1, function (err, data) {
 
         console.log(data);
 
         console.log('Pushing repo to server');
 
-        childProcess.exec(command2, function (err, data) {
+        exec(command2, function (err, data) {
 
           console.log(data);
 
           console.log('Fixing permissions');
 
-          childProcess.exec(command3, function (err, data) {
+          exec(command3, function (err, data) {
 
             console.log(data);
 
             console.log('Cleaning up');
 
-            childProcess.exec(command4, function (err, data) {
+            exec(command4, function (err, data) {
               console.log(data);
             });
           });
@@ -93,6 +95,8 @@ var scotty = function scotty() {
   
 }
 
+var inst = module.exports = scotty();
+
 if (envNotConfigured.length > 0) {
   console.error('Environment variables not set');
   envNotConfigured.forEach(function logMissingConfig(name) {
@@ -101,9 +105,8 @@ if (envNotConfigured.length > 0) {
 }
 
 if (args.length > 0) {
-  scotty().run(args[0], args.slice(1));
+  inst.run(args[0], args.slice(1));
 } else {
   console.log('No command provided');
 }
 
-module.exports = scotty;
