@@ -2,6 +2,7 @@
 
 require('dotenv').load({silent: true});
 
+var Promise = require('bluebird');
 var exec = require('child_process').exec;
 var args = process.argv.slice(2);
 var env = {
@@ -28,6 +29,49 @@ var envNotConfigured = (function listMissingConfig(env) {
 
 var scotty = function scotty() {
 
+  var repoManager = {
+    cloneRepo: function cloneRepo (opts) {
+      var command = 'git clone --bare ' + opts.localRepoPath + ' ' + opts.cloneRepoPath;
+      return function () {
+        var res;
+        console.log('Cloning repo to %', opts.cloneRepoPath);
+        console.log('running: %s', command);
+        exec(command, function (err, data) { console.log(data); res(); });
+        return new Promise(function (resolve, reject) { res = resolve });
+      };
+    },
+    copyRepoToServer: function copyRepoToServer (opts) {
+      var command = 'scp -r -P' + env.port + ' ' + opts.cloneRepoPath + ' root@' + env.host + ':' + env.repoPath;
+      return function () {
+        var res;
+        console.log('Pushing repo to server');
+        console.log('running: %s', command);
+        exec(command, function (err, data) { console.log(data); res();});
+        return new Promise(function (resolve, reject) { res = resolve });
+      };
+    },
+    makeRemoteServerWriteable: function makeRemoteServerWriteable (opts) {
+      var command = 'ssh -p' + env.port + ' root@' + env.host + ' chmod -R g+rwX' + env.repoPath + '/' + opts.cloneRepoPath;
+      return function () {
+        var res;
+        console.log('Fixing permissions');
+        console.log('running: %s', command);
+        exec(command, function (err, data) { console.log(data); res();});
+        return new Promise(function (resolve, reject) { res = resolve });
+      };
+    },
+    cleanUp: function cleanup (opts) {
+      var command = 'rm -rf ' + opts.cloneRepoPath;
+      return function () {
+        var res;
+        console.log('Cleaning Up');
+        console.log('running: %s', command);
+        exec(command, function (err, data) { console.log(data); res();});
+        return new Promise(function (resolve, reject) { res = resolve });
+      };
+    }
+  };
+
   var methods =  {
     'list': function list() {
       var command = 'ssh root@' + env.host + ' -p' + env.port + ' ls ' + env.repoPath;
@@ -36,47 +80,19 @@ var scotty = function scotty() {
       });
     },
     'add': function add (localRepoPath, hostRepoName) {
-      var cloneRepoPath = hostRepoName + '.git';
-      var host = process.env.DS_HOST;      
-      var port = process.env.DS_HOST_SSH_PORT;
-      var repoPath = process.env.DS_GIT_REPO_PATH;
       // need to validate local repo path
       // need to validate that the local repo path points to a git repo
       // need to post validate the cloned repo
-      var command1 = 'git clone --bare ' + localRepoPath + ' ' + cloneRepoPath;
-      var command2 = 'scp -r -P' + port + ' ' + cloneRepoPath + ' root@' + host + ':' + repoPath;
-      var command3 = 'ssh -p' + port + ' root@' + host + ' chmod -R g+rwX' + repoPath + '/' + cloneRepoPath
-      var command4 = 'rm -rf ' + cloneRepoPath;
-
-      console.log('Cloning repo to %', cloneRepoPath);
-
-      exec(command1, function (err, data) {
-
-        console.log(data);
-
-        console.log('Pushing repo to server');
-
-        exec(command2, function (err, data) {
-
-          console.log(data);
-
-          console.log('Fixing permissions');
-
-          exec(command3, function (err, data) {
-
-            console.log(data);
-
-            console.log('Cleaning up');
-
-            exec(command4, function (err, data) {
-              console.log(data);
-            });
-          });
-
-        });
-
-      });
-
+      var opts = {
+        cloneRepoPath: hostRepoName + '.git',
+        localRepoPath: localRepoPath,
+        hostRepoName: hostRepoName
+      };
+      Promise.resolve()
+        .then(repoManager.cloneRepo(opts))
+        .then(repoManager.copyRepoToServer(opts))
+        .then(repoManager.makeRemoteServerWriteable(opts))
+        .then(repoManager.cleanUp(opts))
     }
   }
 
@@ -90,6 +106,7 @@ var scotty = function scotty() {
 
   return {
     __methods: methods,
+    __repoManager: repoManager,
     run: run
   }
   
