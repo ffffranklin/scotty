@@ -3,6 +3,7 @@
 require('dotenv').load({silent: true});
 
 var Promise = require('bluebird');
+var argv = require('minimist')(process.argv.slice(2));
 var exec = require('child_process').exec;
 var args = process.argv.slice(2);
 var env = {
@@ -85,7 +86,7 @@ var scotty = function scotty() {
     if (methods.hasOwnProperty(method)) {
       methods[method].apply(this, args);
     } else {
-      console.error('Method "%s" does not exist', method);
+      console.error('scotty: Method "%s" does not exist', method);
     }
   }
 
@@ -100,15 +101,15 @@ var scotty = function scotty() {
 var inst = module.exports = scotty();
 
 if (envNotConfigured.length > 0) {
-  console.error('Environment variables not set');
+  console.error('scotty: Environment variables not set');
   envNotConfigured.forEach(function logMissingConfig(name) {
     console.log(' - Missing %s', name);
   });
 }
 
-if (args.length > 0) {
-  inst.run(args[0], args.slice(1));
+if (argv._.length > 0) {
+  inst.run(argv._[0], argv._.slice(1));
 } else {
-  console.log('No command provided');
+  console.log('scotty: No command provided');
 }
 
