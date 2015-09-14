@@ -14,23 +14,6 @@ var log = function log() {
 var config = require('./config');
 var env = config.server;
 
-var envNotConfigured = (function listMissingConfig(env) {
-  var result = [];
-  var required = [
-    'DS_HOST',
-    'DS_HOST_SSH_PORT',
-    'DS_PRIMARY_USER',
-    'DS_GIT_REPO_PATH'
-  ];
-
-  required.forEach(function(name) {
-    if (!env.hasOwnProperty(name)) {
-      result.push(name);
-    }
-  });
-  return result;
-})(process.env);
-
 var scotty = function scotty() {
 
   var runCommand = function runCommand(cmd, msg) {
@@ -128,13 +111,6 @@ var scotty = function scotty() {
 };
 
 var inst = module.exports = scotty();
-
-if (envNotConfigured.length > 0) {
-  log('scotty: FATAL_ERROR: Environment variables not set');
-  envNotConfigured.forEach(function logMissingConfig(name) {
-    log(' - Missing %s', name);
-  });
-}
 
 if (argv._.length > 0) {
   inst.run(argv._[0], argv._.slice(1));
