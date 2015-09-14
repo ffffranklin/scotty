@@ -9,14 +9,14 @@ gulp.task('test', shell.task([
 ]));
 
 gulp.task('lint', function () {
-  return gulp.src(['index.js'])
+  return gulp.src(['index.js', 'config.js'])
     .pipe(eslint())
     .pipe(eslint.format());
 });
 
 gulp.task('watch', ['test', 'lint'], function() {
-  gulp.watch(['index.js', 'test/**/*.js'], ['test']);
-  gulp.watch(['index.js', 'test/**/*.js'], ['lint']);
+  gulp.watch(['index.js', 'config.js', 'test/**/*.js'], ['test']);
+  gulp.watch(['index.js', 'config.js', 'test/**/*.js'], ['lint']);
 });
 
 gulp.task('default', ['test']);

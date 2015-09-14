@@ -51,3 +51,4 @@ test('scotty.add should call methods in correct order', function (t) {
   scotty.__methods.add();
   t.end();
 });
+
