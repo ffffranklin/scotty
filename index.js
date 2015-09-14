@@ -1,6 +1,6 @@
 #! /usr/bin/env node
 
-'use strict';
+"use strict";
 
 require('dotenv').load({silent: true});
 

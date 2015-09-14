@@ -7,4 +7,5 @@ extends:
 
 rules:
   no-console: 0
+  quotes: [0, "single", "avoid-escape"]
 
