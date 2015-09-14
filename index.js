@@ -11,11 +11,8 @@ var format = require('util').format;
 var log = function log() {
   return console.log.apply(null, arguments);
 };
-var env = {
-  host: process.env.DS_HOST,
-  port: process.env.DS_HOST_SSH_PORT,
-  repoPath: process.env.DS_GIT_REPO_PATH
-};
+var config = require('./config');
+var env = config.server;
 
 var envNotConfigured = (function listMissingConfig(env) {
   var result = [];
