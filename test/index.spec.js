@@ -1,8 +1,9 @@
 var test = require('tape');
 var rewire = require('rewire');
+var sinon = require('sinon');
 var scotty = rewire('../');
 
-var listCommand;
+var lastCommand;
 
 scotty.__set__({
   env: {
@@ -11,7 +12,7 @@ scotty.__set__({
     repoPath: '__repoPath__'
   },
   exec: function (command, cb) {
-    listCommand = command;
+    lastCommand = command;
   }
 });
 
@@ -22,7 +23,7 @@ test('scotty should have list command', function (t) {
 
 test('scotty.list should run ssh command', function (t) {
   scotty.__methods.list();
-  t.equal(listCommand, 'ssh root@__host__ -p1337 ls __repoPath__');
+  t.equal(lastCommand, 'ssh root@__host__ -p1337 ls __repoPath__');
   t.end();
 });
 
@@ -52,3 +53,31 @@ test('scotty.add should call methods in correct order', function (t) {
   t.end();
 });
 
+test('scotty.destroy should throw if no path is provided', function (t) {
+  t.throws(scotty.__methods.destroy, new RegExp('No repo', 'i'));
+  t.end();
+});
+
+test('scotty.destroy should call remote delete command', function (t) {
+  var remoteDeleteSpy = sinon.spy(scotty.__repoManager, 'remoteDelete');
+  scotty.__methods.destroy('test_repo');
+  t.assert(remoteDeleteSpy.calledOnce);
+  t.assert(remoteDeleteSpy.calledWithExactly('test_repo'));
+  remoteDeleteSpy.restore();
+  t.end();
+});
+
+test('repoManager.remoteDelete should run remote delete via ssh', function (t) {
+  var runCommandSpy = sinon.spy(scotty, '__runCommand');
+  scotty.__repoManager.remoteDelete('repo.git');
+  t.equal(lastCommand, 'ssh -p1337 root@__host__ rm -rf __repoPath__/repo.git');
+  t.end();
+});
+
+/*
+test('scotty.destroy should prompt user that command finished successfully', function (t) {
+});
+
+test('scotty.destroy should prompt user if the command finished unsuccessfully', function (t) {
+});
+*/

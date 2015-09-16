@@ -58,6 +58,18 @@ var scotty = function scotty() {
       var command = format('rm -rf %s', opts.cloneRepoPath);
 
       return runCommand(command, 'Cleaning Up');
+    },
+    remoteDelete: function(cloneRepoPath) {
+      var cmd = 'ssh -p%d root@%s rm -rf %s';
+      var port = env.port;
+      var host = env.host;
+      var targetPath = format('%s/%s', env.repoPath, cloneRepoPath);
+      var command = format(cmd, port, host, targetPath);
+
+      exec(command, function(err, data) {
+        log('Deleting Repo');
+        log(data);
+      });
     }
   };
 
@@ -92,6 +104,10 @@ var scotty = function scotty() {
       ).then(
         repoManager.cleanUp(opts)
       );
+    },
+    'destroy': function destroy(path) {
+      if (!path) { throw 'scott: No repo path provided'; }
+      repoManager.remoteDelete(path);
     }
   };
 
@@ -105,6 +121,7 @@ var scotty = function scotty() {
 
   return {
     __methods: methods,
+    __runCommand: runCommand,
     __repoManager: repoManager,
     run: run
   };
