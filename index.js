@@ -11,7 +11,8 @@ var format = require('util').format;
 var log = function log() {
   return console.log.apply(null, arguments);
 };
-var config = require('./config');
+var Config = require('./config');
+var config = new Config();
 var env = config.server;
 
 var scotty = function scotty() {
