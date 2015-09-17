@@ -1,16 +1,22 @@
 var test = require('tape');
 var rewire = require('rewire');
 var sinon = require('sinon');
+var format = require('util').format;
 var scotty = rewire('../');
+
+var mockConf = {
+  server: {
+    host: '10.0.0.15',
+    port: '1337',
+    user: 'fooUser',
+    repoPath: '/path/to/repo'
+  }
+}
 
 var lastCommand;
 
 scotty.__set__({
-  env: {
-    host: '__host__',
-    port: '1337',
-    repoPath: '__repoPath__'
-  },
+  conf: mockConf,
   exec: function (command, cb) {
     lastCommand = command;
   }
@@ -23,7 +29,13 @@ test('scotty should have list command', function (t) {
 
 test('scotty.list should run ssh command', function (t) {
   scotty.__methods.list();
-  t.equal(lastCommand, 'ssh root@__host__ -p1337 ls __repoPath__');
+  var cmd = format('ssh %s@%s -p%d ls %s',
+    mockConf.server.user,
+    mockConf.server.host,
+    mockConf.server.port,
+    mockConf.server.repoPath
+  );
+  t.equal(lastCommand, cmd);
   t.end();
 });
 
@@ -69,8 +81,17 @@ test('scotty.destroy should call remote delete command', function (t) {
 
 test('repoManager.remoteDelete should run remote delete via ssh', function (t) {
   var runCommandSpy = sinon.spy(scotty, '__runCommand');
-  scotty.__repoManager.remoteDelete('repo.git');
-  t.equal(lastCommand, 'ssh -p1337 root@__host__ rm -rf __repoPath__/repo.git');
+  var repo = 'repo.git';
+  var cmd = format(
+    'ssh -p%d %s@%s rm -rf %s/%s',
+    mockConf.server.port,
+    mockConf.server.user,
+    mockConf.server.host,
+    mockConf.server.repoPath,
+    repo
+  );
+  scotty.__repoManager.remoteDelete(repo);
+  t.equal(lastCommand, cmd);
   t.end();
 });
 

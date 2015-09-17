@@ -11,8 +11,8 @@ var format = require('util').format;
 var log = function log() {
   return console.log.apply(null, arguments);
 };
-var config = require('./config');
-var env = config.server;
+var Config = require('./config');
+var conf = new Config();
 
 var scotty = function scotty() {
 
@@ -28,6 +28,7 @@ var scotty = function scotty() {
   };
 
   var repoManager = {
+
     cloneRepo: function cloneRepo(opts) {
       var srcPath = opts.localRepoPath;
       var destPath = opts.cloneRepoPath;
@@ -35,51 +36,61 @@ var scotty = function scotty() {
 
       return runCommand(command, 'Cloning repo to %', destPath);
     },
+
     copyRepoToServer: function copyRepoToServer(opts) {
       var cmd = 'scp -r -P%d %s root@%s:%s';
-      var port = env.port;
+      var port = conf.server.port;
       var src = opts.cloneRepoPath;
-      var host = env.host;
-      var repoPath = env.repoPath;
+      var host = conf.server.host;
+      var repoPath = conf.server.repoPath;
       var command = format(cmd, port, src, host, repoPath);
 
       return runCommand(command, 'Pushing repo to server');
     },
+
     makeRemoteServerWriteable: function makeRemoteServerWriteable(opts) {
-      var cmd = 'ssh -p%d root@%s chmod -R g+rwX %s';
-      var port = env.port;
-      var host = env.host;
-      var targetPath = format('%s/%s', env.repoPath, opts.cloneRepoPath);
-      var command = format(cmd, port, host, targetPath);
+      var command = format('ssh -p%d %s@%s chmod -R g+rwX %s/%s',
+        conf.server.port,
+        conf.server.user,
+        conf.server.host,
+        conf.server.repoPath,
+        opts.cloneRepoPath
+      );
 
       return runCommand(command, 'Fixing permissions');
     },
+
     cleanUp: function cleanup(opts) {
       var command = format('rm -rf %s', opts.cloneRepoPath);
 
       return runCommand(command, 'Cleaning Up');
     },
+
     remoteDelete: function(cloneRepoPath) {
-      var cmd = 'ssh -p%d root@%s rm -rf %s';
-      var port = env.port;
-      var host = env.host;
-      var targetPath = format('%s/%s', env.repoPath, cloneRepoPath);
-      var command = format(cmd, port, host, targetPath);
+      var command = format('ssh -p%d %s@%s rm -rf %s/%s',
+        conf.server.port,
+        conf.server.user,
+        conf.server.host,
+        conf.server.repoPath,
+        cloneRepoPath
+      );
 
       exec(command, function(err, data) {
         log('Deleting Repo');
         log(data);
       });
     }
+
   };
 
   var methods =  {
     'list': function list() {
-      var cmd = 'ssh root@%s -p%d ls %s';
-      var host = env.host;
-      var port = env.port;
-      var targetPath = env.repoPath;
-      var command = format(cmd, host, port, targetPath);
+      var command = format('ssh %s@%s -p%d ls %s',
+        conf.server.user,
+        conf.server.host,
+        conf.server.port,
+        conf.server.repoPath
+      );
 
       exec(command, function(err, data) {
         log(data);
