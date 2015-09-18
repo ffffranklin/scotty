@@ -11,7 +11,7 @@ var mockConf = {
     user: 'fooUser',
     repoPath: '/path/to/repo'
   }
-}
+};
 
 var lastCommand;
 
@@ -79,21 +79,7 @@ test('scotty.destroy should call remote delete command', function (t) {
   t.end();
 });
 
-test('repoManager.remoteDelete should run remote delete via ssh', function (t) {
-  var runCommandSpy = sinon.spy(scotty, '__runCommand');
-  var repo = 'repo.git';
-  var cmd = format(
-    'ssh -p%d %s@%s rm -rf %s/%s',
-    mockConf.server.port,
-    mockConf.server.user,
-    mockConf.server.host,
-    mockConf.server.repoPath,
-    repo
-  );
-  scotty.__repoManager.remoteDelete(repo);
-  t.equal(lastCommand, cmd);
-  t.end();
-});
+
 
 /*
 test('scotty.destroy should prompt user that command finished successfully', function (t) {
