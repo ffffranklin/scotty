@@ -5,9 +5,7 @@ module.exports = function scotty(conf) {
 
   var promise = require('bluebird');
   var repoManager = require('./lib/repo-manager');
-  var log = function log() {
-    return console.log.apply(null, arguments);
-  };
+  var log = require('./lib/log');
 
   var methods =  {
     'list': function list(opts) {

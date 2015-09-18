@@ -5,8 +5,19 @@ require('dotenv').load({silent: true});
 var Config = require('../config');
 var conf = new Config();
 var argv = require('minimist')(process.argv.slice(2));
+var log = require('../lib/log');
 var scotty = require('../');
+var pkg = require('../package.json');
+var meow = require('meow');
 var inst = scotty(conf);
+
+var cli =  meow({
+  help: [
+    'Usage',
+    ' $ scotty [list|destroy|create]'
+  ],
+  pkg: pkg
+});
 
 if (argv._.length > 0) {
   inst.run(argv._[0], argv._.slice(1));
