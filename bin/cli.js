@@ -1,20 +1,21 @@
 #! /usr/bin/env node
 
+'use strict';
+
 require('dotenv').load({silent: true});
 
 var Config = require('../config');
 var conf = new Config();
 var argv = require('minimist')(process.argv.slice(2));
 var log = require('../lib/log');
-var scotty = require('../');
+var scotty = require('../')(conf);
 var pkg = require('../package.json');
 var meow = require('meow');
-var inst = scotty(conf);
 
 var cli =  meow({
   help: [
     'Usage',
-    '  $ scotty [<list|destroy|create> ...]',
+    '  $ scotty [<list|destroy|add> ...]',
     '',
     'Options',
     '  --user          SSH username',
@@ -24,8 +25,8 @@ var cli =  meow({
     '',
     'Examples',
     '  $ scotty list',
-    '  $ scotty create repo/path --user=git',
-    '  $ scotty destroy remote/path --host=10.0.0.25 --port=1022',
+    '  $ scotty add repo/path --user=git',
+    '  $ scotty destroy remote/path --user=git --host=10.0.0.25 --port=1022 --repoPath=/volume1/git',
     '',
     'Tips',
     '  Put options in .bashrc instead of using flags for convenience'
@@ -42,7 +43,7 @@ function init(cb) {
   }
 }
 
-init(inst.run);
+init(scotty.run);
 
 module.exports = {
   init: init

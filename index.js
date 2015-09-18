@@ -1,7 +1,7 @@
 
 module.exports = function scotty(conf) {
 
-  "use strict";
+  'use strict';
 
   var promise = require('bluebird');
   var repoManager = require('./lib/repo-manager');

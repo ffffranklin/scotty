@@ -50,12 +50,12 @@ The NPM package requires that you have ssh installed as it depends on it heavily
 $ scotty list
 ```
 
-### create
+### add 
 
-`create` will clone your local repo to the server as a bare repo that you can continue to work from
+`add` will clone your local repo to the server as a bare repo that you can continue to work from
 
 ```
-$ scotty create [repo_path] [new_repo_path]
+$ scotty add [repo_path] [new_repo_path]
 ```
 
 ### destroy
