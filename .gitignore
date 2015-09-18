@@ -10,4 +10,4 @@
 /.sass-cache
 /.env
 /node_modules
-
+/coverage

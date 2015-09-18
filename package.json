@@ -5,7 +5,9 @@
   "main": "index.js",
   "repository": "https://github.com/ffffranklin/scotty.git",
   "scripts": {
-    "test": "gulp test"
+    "test": "tape test/**/*.js | faucet",
+    "cover": "istanbul cover tape -- test/**/*.spec.js",
+    "codeclimate": "codeclimate-test-reporter < coverage/lcov.info"
   },
   "keywords": [
     "synology",
