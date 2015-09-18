@@ -2,7 +2,6 @@ var test = require('tape');
 var rewire = require('rewire');
 var sinon = require('sinon');
 var format = require('util').format;
-var scotty = rewire('../');
 
 var mockConf = {
   server: {
@@ -13,14 +12,7 @@ var mockConf = {
   }
 };
 
-var lastCommand;
-
-scotty.__set__({
-  conf: mockConf,
-  exec: function (command, cb) {
-    lastCommand = command;
-  }
-});
+var scotty = rewire('../')(mockConf);
 
 test('scotty should have list command', function (t) {
   t.ok(scotty.__methods['list']);
@@ -29,7 +21,7 @@ test('scotty should have list command', function (t) {
 
 test('scotty.run should apply args and default config to method', function(t) {
   var spyName = 'fooSpy';
-  var spy = scotty.__methods[spyName] = sinon.spy();
+  var spy = scotty.__methods[spyName] = sinon.stub();
   var args = ['arg1', 'arg2'];
 
   scotty.run(spyName, args);
@@ -41,7 +33,7 @@ test('scotty.run should apply args and default config to method', function(t) {
 
 test('scotty.run should apply args and custom config to method', function(t) {
   var spyName = 'barSpy';
-  var spy = scotty.__methods[spyName] = sinon.spy();
+  var spy = scotty.__methods[spyName] = sinon.stub();
   var args = ['arg1', 'arg2'];
   var opts = { foo: 'bar'};
 
@@ -94,7 +86,7 @@ test('scotty.destroy should throw if no path is provided', function (t) {
 });
 
 test('scotty.destroy should call remote delete command', function (t) {
-  var remoteDeleteSpy = sinon.spy(scotty.__repoManager, 'remoteDelete');
+  var remoteDeleteSpy = sinon.stub(scotty.__repoManager, 'remoteDelete');
   scotty.__methods.destroy('test_repo');
   t.assert(remoteDeleteSpy.calledOnce);
   t.assert(remoteDeleteSpy.calledWithExactly('test_repo'));

@@ -1,21 +1,13 @@
-#! /usr/bin/env node
 
-"use strict";
+module.exports = function scotty(conf) {
 
-require('dotenv').load({silent: true});
+  "use strict";
 
-var Promise = require('bluebird');
-var repoManager = require('./lib/repo-manager');
-var argv = require('minimist')(process.argv.slice(2));
-var exec = require('child_process').exec;
-var format = require('util').format;
-var log = function log() {
-  return console.log.apply(null, arguments);
-};
-var Config = require('./config');
-var conf = new Config();
-
-var scotty = function scotty() {
+  var promise = require('bluebird');
+  var repoManager = require('./lib/repo-manager');
+  var log = function log() {
+    return console.log.apply(null, arguments);
+  };
 
   var methods =  {
     'list': function list(opts) {
@@ -31,7 +23,7 @@ var scotty = function scotty() {
         hostRepoName: hostRepoName
       };
 
-      Promise.resolve().then(
+      promise.resolve().then(
         repoManager.cloneRepo(opts)
       ).then(
         repoManager.copyRepoToServer(opts)
@@ -66,10 +58,3 @@ var scotty = function scotty() {
   };
 };
 
-var inst = module.exports = scotty();
-
-if (argv._.length > 0) {
-  inst.run(argv._[0], argv._.slice(1));
-} else {
-  log('scotty: No command provided');
-}
