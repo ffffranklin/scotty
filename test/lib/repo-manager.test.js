@@ -2,8 +2,7 @@ var test = require('tape');
 var rewire = require('rewire');
 var sinon = require('sinon');
 var format = require('util').format;
-var scotty = rewire('../../');
-var lastCommand;
+var repoManager = rewire('../../lib/repo-manager');
 
 var mockConf = {
   server: {
@@ -14,15 +13,15 @@ var mockConf = {
   }
 };
 
-scotty.__set__({
-  conf: mockConf,
-  exec: function (command, cb) {
-    lastCommand = command;
-  }
+repoManager.__set__({
+  conf: mockConf
 });
 
 test('repoManager.remoteDelete should run remote delete via ssh', function (t) {
-  var runCommandSpy = sinon.spy(scotty, '__runCommand');
+  var execStub = sinon.stub();
+  var unsetRewire = repoManager.__set__({
+    exec: execStub
+  });
   var repo = 'repo.git';
   var cmd = format(
     'ssh -p%d %s@%s rm -rf %s/%s',
@@ -32,7 +31,9 @@ test('repoManager.remoteDelete should run remote delete via ssh', function (t) {
     mockConf.server.repoPath,
     repo
   );
-  scotty.__repoManager.remoteDelete(repo);
-  t.equal(lastCommand, cmd);
+  repoManager.remoteDelete(repo);
+  t.assert(execStub.calledOnce);
+  t.assert(execStub.calledWith(cmd));
+  unsetRewire();
   t.end();
 });
