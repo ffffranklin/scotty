@@ -3,9 +3,8 @@ node_js:
   - "0.12"
   - "0.11"
 before_script:
-  - npm install -g codeclimate-test-reporter istanbul
+  - npm install -g codeclimate-test-reporter istanbul gulp
 script:
   - npm test
-  - npm run-script cover
   - npm run-script codeclimate
 

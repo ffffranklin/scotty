@@ -1,13 +1,13 @@
 {
-  "name": "scotty",
+  "name": "scotty-cli",
   "version": "0.0.1",
-  "description": "Synology Git Repo Manager",
+  "description": "The Scotty CLI is used to manage Git repositories remotely from the command line",
   "main": "index.js",
   "repository": "https://github.com/ffffranklin/scotty.git",
   "scripts": {
-    "test": "tape test/**/*.js | faucet",
-    "cover": "istanbul cover tape -- test/**/*.spec.js",
-    "codeclimate": "codeclimate-test-reporter < coverage/lcov.info"
+    "test": "gulp test",
+    "cover": "gulp cover",
+    "codeclimate": "gulp codeclimate"
   },
   "keywords": [
     "synology",
@@ -20,11 +20,13 @@
   "license": "ISC",
   "preferGlobal": true,
   "bin": {
-    "scotty": "index.js"
+    "scotty": "bin/cli.js"
   },
   "dependencies": {
     "bluebird": "^2.10.0",
     "dotenv": "^1.2.0",
+    "lodash": "^3.10.1",
+    "meow": "^3.3.0",
     "minimist": "^1.2.0"
   },
   "devDependencies": {

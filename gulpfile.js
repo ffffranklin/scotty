@@ -5,7 +5,15 @@ var shell = require('gulp-shell');
 var eslint = require('gulp-eslint');
 
 gulp.task('test', shell.task([
-  'tape test/**/*.js | faucet',
+  'tape "test/**/*.test.js" | faucet'
+]));
+
+gulp.task('cover', shell.task([
+  'istanbul cover tape -- "test/**/*.test.js"'
+]));
+
+gulp.task('codeclimate', ['cover'], shell.task([
+  'codeclimate-test-reporter < coverage/lcov.info'
 ]));
 
 gulp.task('lint', function () {
@@ -15,8 +23,12 @@ gulp.task('lint', function () {
 });
 
 gulp.task('watch', ['test', 'lint'], function() {
-  gulp.watch(['index.js', 'config.js', 'test/**/*.js'], ['test']);
-  gulp.watch(['index.js', 'config.js', 'test/**/*.js'], ['lint']);
+  var paths= [
+    '**/*.js',
+    'test/**/*.js'
+  ];
+  gulp.watch(paths, ['test']);
+  gulp.watch(paths, ['lint']);
 });
 
 gulp.task('default', ['test']);
