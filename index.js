@@ -39,7 +39,7 @@ module.exports = function scotty(conf) {
 
   var run = function(method, args, opts) {
     var args = args || [];
-    var opts = opts || conf;
+    var opts = opts || conf.server;
 
     if (methods.hasOwnProperty(method)) {
       methods[method].apply(null, args.concat(opts));

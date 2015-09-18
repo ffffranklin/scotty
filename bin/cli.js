@@ -19,8 +19,17 @@ var cli =  meow({
   pkg: pkg
 });
 
-if (argv._.length > 0) {
-  inst.run(argv._[0], argv._.slice(1));
-} else {
-  log('scotty: No command provided');
+function init(cb) {
+  var opts = (JSON.stringify(cli.flags) === '{}') ? null : cli.flags;
+  if (argv._.length > 0) {
+    cb(cli.input[0], cli.input.slice(1), opts)
+  } else {
+    log('scotty: No command provided');
+  }
 }
+
+init(inst.run);
+
+module.exports = {
+  init: init
+};

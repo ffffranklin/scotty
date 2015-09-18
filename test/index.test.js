@@ -26,7 +26,7 @@ test('scotty.run should apply args and default config to method', function(t) {
 
   scotty.run(spyName, args);
   t.assert(spy.calledOnce);
-  t.deepEqual(spy.args[0], [args[0], args[1], mockConf]);
+  t.deepEqual(spy.args[0], [args[0], args[1], mockConf.server]);
   delete scotty.__methods[spyName];
   t.end();
 });
