@@ -1,6 +1,7 @@
 var test = require('tape');
 var rewire = require('rewire');
 var sinon = require('sinon');
+var _ = require('lodash');
 var format = require('util').format;
 
 var mockConf = {
@@ -31,15 +32,16 @@ test('scotty.run should apply args and default config to method', function(t) {
   t.end();
 });
 
-test('scotty.run should apply args and custom config to method', function(t) {
+test('scotty.run should apply args and merge custom config to method', function(t) {
   var spyName = 'barSpy';
   var spy = scotty.__methods[spyName] = sinon.stub();
   var args = ['arg1', 'arg2'];
-  var opts = { foo: 'bar'};
+  var opts = { user: 'customUser'};
+  var mergedOpts = _.extend({}, mockConf.server, opts);
 
   scotty.run(spyName, args, opts);
   t.assert(spy.calledOnce);
-  t.deepEqual(spy.args[0], [args[0], args[1], opts]);
+  t.deepEqual(spy.args[0], [args[0], args[1], mergedOpts]);
   delete scotty.__methods[spyName];
   t.end();
 });

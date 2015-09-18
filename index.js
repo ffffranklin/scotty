@@ -6,6 +6,7 @@ module.exports = function scotty(conf) {
   var promise = require('bluebird');
   var repoManager = require('./lib/repo-manager');
   var log = require('./lib/log');
+  var _ = require('lodash');
 
   var methods =  {
     'list': function list(opts) {
@@ -39,7 +40,7 @@ module.exports = function scotty(conf) {
 
   var run = function(method, args, opts) {
     var args = args || [];
-    var opts = opts || conf.server;
+    var opts = _.extend({}, conf.server, opts) || conf.server;
 
     if (methods.hasOwnProperty(method)) {
       methods[method].apply(null, args.concat(opts));
