@@ -7,10 +7,10 @@
                (_/   
 ```
 
-[![Build Status](https://secure.travis-ci.org/ffffranklin/scotty.svg?branch=master)](https://travis-ci.org/ffffranklin/scotty)
-[![Dependency Status](https://david-dm.org/ffffranklin/scotty.svg)](https://david-dm.org/ffffranklin/scotty)
-[![Test Coverage](https://codeclimate.com/github/ffffranklin/scotty/badges/coverage.svg)](https://codeclimate.com/github/ffffranklin/scotty/coverage)
-[![Code Climate](https://codeclimate.com/github/ffffranklin/scotty/badges/gpa.svg)](https://codeclimate.com/github/ffffranklin/scotty)
+[![Build Status](https://img.shields.io/travis/ffffranklin/scotty/master.svg)](https://travis-ci.org/ffffranklin/scotty)
+[![Dependency Status](https://img.shields.io/david/ffffranklin/scotty.svg)](https://david-dm.org/ffffranklin/scotty)
+[![Test Coverage](https://img.shields.io/codeclimate/coverage/github/ffffranklin/scotty.svg)](https://codeclimate.com/github/ffffranklin/scotty/coverage)
+[![Code Climate](https://img.shields.io/codeclimate/github/ffffranklin/scotty.svg)](https://codeclimate.com/github/ffffranklin/scotty)
 
 The Scotty CLI is used to manage Git repositories remotely from the command line
 
