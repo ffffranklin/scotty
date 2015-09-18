@@ -46,6 +46,19 @@ test('scotty.run should apply args and merge custom config to method', function(
   t.end();
 });
 
+test('scotty.run should set port 22 as default port', function(t) {
+  var spyName = 'fooBarSpy';
+  var scotty = rewire('../')(null);
+  var spy = scotty.__methods[spyName] = sinon.stub();
+  var args = ['arg1', 'arg2'];
+
+  scotty.run(spyName, args);
+  t.assert(spy.calledOnce);
+  t.deepEqual(spy.args[0], [args[0], args[1], {port:22}]);
+  delete scotty.__methods[spyName];
+  t.end();
+});
+
 
 test('scotty.list should call remote list command', function (t) {
   var remoteListSpy = sinon.spy(scotty.__repoManager, 'remoteList');
