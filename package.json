@@ -1,5 +1,5 @@
 {
-  "name": "scotty",
+  "name": "scotty-cli",
   "version": "0.0.1",
   "description": "Synology Git Repo Manager",
   "main": "index.js",

@@ -37,3 +37,31 @@ test('repoManager.remoteDelete should run remote delete via ssh', function (t) {
   unsetRewire();
   t.end();
 });
+
+test('repoManager.remoteList should run ssh command', function (t) {
+  var execStub = sinon.stub();
+  var unsetRewire = repoManager.__set__({
+    exec: execStub
+  });
+  var opts = {
+    server: {
+      host: '10.0.0.20',
+      port: '1969',
+      user: 'barUser',
+      repoPath: '/new/path/to/repo'
+    }
+  };
+  var cmd = format('ssh %s@%s -p%d ls %s',
+    opts.server.user,
+    opts.server.host,
+    opts.server.port,
+    opts.server.repoPath
+  );
+
+  repoManager.remoteList(opts);
+  t.assert(execStub.calledOnce);
+  t.assert(execStub.calledWith(cmd));
+  unsetRewire();
+  t.end();
+});
+

@@ -19,16 +19,7 @@ var scotty = function scotty() {
 
   var methods =  {
     'list': function list(opts) {
-      var command = format('ssh %s@%s -p%d ls %s',
-        opts.server.user,
-        opts.server.host,
-        opts.server.port,
-        opts.server.repoPath
-      );
-
-      exec(command, function(err, data) {
-        log(data);
-      });
+      repoManager.remoteList(opts);
     },
     'add': function add(localRepoPath, hostRepoName) {
       // need to validate local repo path

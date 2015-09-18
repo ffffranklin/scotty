@@ -53,23 +53,12 @@ test('scotty.run should apply args and custom config to method', function(t) {
 });
 
 
-test('scotty.list should run ssh command', function (t) {
-  var opts = {
-    server: {
-      host: '10.0.0.20',
-      port: '1969',
-      user: 'barUser',
-      repoPath: '/new/path/to/repo'
-    }
-  };
-  scotty.__methods.list(opts);
-  var cmd = format('ssh %s@%s -p%d ls %s',
-    opts.server.user,
-    opts.server.host,
-    opts.server.port,
-    opts.server.repoPath
-  );
-  t.equal(lastCommand, cmd);
+test('scotty.list should call remote list command', function (t) {
+  var remoteListSpy = sinon.spy(scotty.__repoManager, 'remoteList');
+  scotty.__methods.list(mockConf);
+  t.assert(remoteListSpy.calledOnce);
+  t.assert(remoteListSpy.calledWithExactly(mockConf));
+  remoteListSpy.restore();
   t.end();
 });
 
