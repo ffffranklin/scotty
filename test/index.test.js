@@ -27,13 +27,47 @@ test('scotty should have list command', function (t) {
   t.end();
 });
 
+test('scotty.run should apply args and default config to method', function(t) {
+  var spyName = 'fooSpy';
+  var spy = scotty.__methods[spyName] = sinon.spy();
+  var args = ['arg1', 'arg2'];
+
+  scotty.run(spyName, args);
+  t.assert(spy.calledOnce);
+  t.deepEqual(spy.args[0], [args[0], args[1], mockConf]);
+  delete scotty.__methods[spyName];
+  t.end();
+});
+
+test('scotty.run should apply args and custom config to method', function(t) {
+  var spyName = 'barSpy';
+  var spy = scotty.__methods[spyName] = sinon.spy();
+  var args = ['arg1', 'arg2'];
+  var opts = { foo: 'bar'};
+
+  scotty.run(spyName, args, opts);
+  t.assert(spy.calledOnce);
+  t.deepEqual(spy.args[0], [args[0], args[1], opts]);
+  delete scotty.__methods[spyName];
+  t.end();
+});
+
+
 test('scotty.list should run ssh command', function (t) {
-  scotty.__methods.list();
+  var opts = {
+    server: {
+      host: '10.0.0.20',
+      port: '1969',
+      user: 'barUser',
+      repoPath: '/new/path/to/repo'
+    }
+  };
+  scotty.__methods.list(opts);
   var cmd = format('ssh %s@%s -p%d ls %s',
-    mockConf.server.user,
-    mockConf.server.host,
-    mockConf.server.port,
-    mockConf.server.repoPath
+    opts.server.user,
+    opts.server.host,
+    opts.server.port,
+    opts.server.repoPath
   );
   t.equal(lastCommand, cmd);
   t.end();

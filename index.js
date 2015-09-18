@@ -17,15 +17,13 @@ var conf = new Config();
 
 var scotty = function scotty() {
 
-
-
   var methods =  {
-    'list': function list() {
+    'list': function list(opts) {
       var command = format('ssh %s@%s -p%d ls %s',
-        conf.server.user,
-        conf.server.host,
-        conf.server.port,
-        conf.server.repoPath
+        opts.server.user,
+        opts.server.host,
+        opts.server.port,
+        opts.server.repoPath
       );
 
       exec(command, function(err, data) {
@@ -58,15 +56,19 @@ var scotty = function scotty() {
     }
   };
 
-  var run = function(method, args) {
+  var run = function(method, args, opts) {
+    var args = args || [];
+    var opts = opts || conf;
+
     if (methods.hasOwnProperty(method)) {
-      methods[method].apply(null, args);
+      methods[method].apply(null, args.concat(opts));
     } else {
       log('scotty: FATAL_ERROR: Method "%s" does not exist', method);
     }
   };
 
   return {
+    __conf: conf,
     __methods: methods,
     __repoManager: repoManager,
     run: run
