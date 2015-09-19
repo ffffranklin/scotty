@@ -25,16 +25,16 @@ module.exports = function scotty(conf) {
       promise.resolve().then(
         repoManager.cloneRepo(opts)
       ).then(
-        repoManager.copyRepoToServer(opts)
+        repoManager.copyRepoToServer(opts, conf.server)
       ).then(
-        repoManager.makeRemoteServerWriteable(opts)
+        repoManager.makeRemoteServerWriteable(opts, conf.server)
       ).then(
-        repoManager.cleanUp(opts)
+        repoManager.cleanUp(opts, conf.server)
       );
     },
     'destroy': function destroy(path) {
       if (!path) { throw 'scott: No repo path provided'; }
-      repoManager.remoteDelete(path);
+      repoManager.remoteDelete(path, conf.server);
     }
   };
 

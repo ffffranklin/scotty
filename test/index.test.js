@@ -104,7 +104,7 @@ test('scotty.destroy should call remote delete command', function (t) {
   var remoteDeleteSpy = sinon.stub(scotty.__repoManager, 'remoteDelete');
   scotty.__methods.destroy('test_repo');
   t.assert(remoteDeleteSpy.calledOnce);
-  t.assert(remoteDeleteSpy.calledWithExactly('test_repo'));
+  t.assert(remoteDeleteSpy.calledWithExactly('test_repo', mockConf.server));
   remoteDeleteSpy.restore();
   t.end();
 });

@@ -29,7 +29,6 @@ var mockConf = {
 
 repoManager.__set__({
   exec: execStub,
-  conf: mockConf,
   log: logSpy
 });
 
@@ -43,7 +42,7 @@ test('repoManager.remoteDelete should run remote delete via ssh', function (t) {
     mockConf.repoPath,
     repo
   );
-  repoManager.remoteDelete(repo);
+  repoManager.remoteDelete(repo, mockConf);
   t.assert(execStub.calledOnce);
   t.equal(execStub.args[0][0], cmd);
   execStub.reset();
