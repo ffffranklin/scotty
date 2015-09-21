@@ -24,7 +24,7 @@ The NPM package requires that you have ssh installed as it depends on it heavily
 
  1. Install the NPM package
  ```
- $ npm install -g scotty
+ $ npm install -g scotty-cli
  ```
  
  2. Add environment variables
