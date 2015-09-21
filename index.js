@@ -1,12 +1,11 @@
+'use strict';
+
+var promise = require('bluebird');
+var repoManager = require('./lib/repo-manager');
+var log = require('./lib/log');
+var _ = require('lodash');
 
 module.exports = function scotty(conf) {
-
-  'use strict';
-
-  var promise = require('bluebird');
-  var repoManager = require('./lib/repo-manager');
-  var log = require('./lib/log');
-  var _ = require('lodash');
 
   var methods =  {
     'list': function list(opts) {
@@ -22,7 +21,7 @@ module.exports = function scotty(conf) {
         hostRepoName: hostRepoName
       };
 
-      promise.resolve().then(
+      var prom = promise.resolve().then(
         repoManager.cloneRepo(opts)
       ).then(
         repoManager.copyRepoToServer(opts, conf.server)
@@ -30,7 +29,21 @@ module.exports = function scotty(conf) {
         repoManager.makeRemoteServerWriteable(opts, conf.server)
       ).then(
         repoManager.cleanUp(opts, conf.server)
-      );
+      ).then(function () {
+        log(
+          [
+            'Repo Ready Captain!\r\n',
+            'Update your remote origin with\r\n',
+            'git remote add origin ssh://%s@%s:%d%s/%s'
+          ].join(''),
+          conf.server.user,
+          conf.server.host,
+          conf.server.port,
+          conf.server.repoPath,
+          opts.cloneRepoPath
+        );
+      });
+      return prom;
     },
     'destroy': function destroy(path) {
       if (!path) { throw 'scott: No repo path provided'; }
