@@ -13,7 +13,8 @@ var mockConf = {
   }
 };
 
-var scotty = rewire('../')(mockConf);
+var scottyModule = rewire('../');
+var scotty = scottyModule(mockConf);
 
 test('scotty should have list command', function (t) {
   t.ok(scotty.__methods['list']);
@@ -91,8 +92,34 @@ test('scotty.add should call methods in correct order', function (t) {
     inc()
     t.equal(calledOrder, 4);
   };
-  scotty.__methods.add();
+  scotty.__methods.add('test', 'test-test');
   t.end();
+});
+
+test('scotty.add should print repo origin update instructions', function(t) {
+  var logSpy = sinon.stub();
+  var localPath = 'test';
+  var hostPath = 'test-test';
+  var unwire = scottyModule.__set__({
+    log: logSpy 
+  });
+  scotty.__repoManager.cloneRepo = sinon.stub().returns(sinon.stub());
+  scotty.__repoManager.copyRepoToServer = sinon.stub().returns(sinon.stub());
+  scotty.__repoManager.makeRemoteServerWriteable = sinon.stub().returns(sinon.stub());
+  scotty.__repoManager.cleanUp = sinon.stub().returns(sinon.stub());
+  scotty.__methods.add(localPath, hostPath).then(function () {
+    t.assert(logSpy.called);
+    t.deepEqual(logSpy.args[0], [
+      "Repo Ready Captain!\r\nUpdate your remote origin with\r\ngit remote add origin ssh://%s@%s:%d%s/%s",
+      mockConf.server.user,
+      mockConf.server.host,
+      mockConf.server.port,
+      mockConf.server.repoPath,
+      hostPath + '.git'
+    ])
+    unwire();
+    t.end()
+  });
 });
 
 test('scotty.destroy should throw if no path is provided', function (t) {
