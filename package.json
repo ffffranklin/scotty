@@ -1,6 +1,6 @@
 {
   "name": "scotty-cli",
-  "version": "0.1.1-b",
+  "version": "0.1.1-c",
   "description": "The Scotty CLI is used to manage Git repositories remotely from the command line",
   "main": "index.js",
   "repository": "https://github.com/ffffranklin/scotty.git",
@@ -26,8 +26,7 @@
     "bluebird": "^2.10.0",
     "dotenv": "^1.2.0",
     "lodash": "^3.10.1",
-    "meow": "^3.3.0",
-    "minimist": "^1.2.0"
+    "meow": "^3.3.0"
   },
   "devDependencies": {
     "eslint": "^1.4.1",
