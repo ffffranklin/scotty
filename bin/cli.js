@@ -6,7 +6,6 @@ require('dotenv').load({silent: true});
 
 var Config = require('../config');
 var conf = new Config();
-var argv = require('minimist')(process.argv.slice(2));
 var log = require('../lib/log');
 var scotty = require('../')(conf);
 var pkg = require('../package.json');
@@ -36,7 +35,7 @@ var cli =  meow({
 
 function init(cb) {
   var opts = (JSON.stringify(cli.flags) === '{}') ? null : cli.flags;
-  if (argv._.length > 0) {
+  if (cli.input.length > 0) {
     cb(cli.input[0], cli.input.slice(1), opts)
   } else {
     log('scotty: No command provided');
