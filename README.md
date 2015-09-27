@@ -65,3 +65,14 @@ $ scotty add [repo_path] [new_repo_path]
 ```
 $ scotty destroy [repo_path]
 ```
+
+## Options
+
+Every method takes the following options
+
+```
+--user <name>     SSH username
+--host <host>     Git server hostname
+--port <n>        Git server SSH port number [Default: 22]
+--repoPath <dir>  Path to repo parent directory on server
+```

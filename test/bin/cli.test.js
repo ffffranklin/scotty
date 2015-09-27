@@ -43,3 +43,22 @@ test('cli.init should pass null options if flags are empty', function nullOption
   ]);
   t.end();
 });
+
+test('cli.init should show help when no commands passed', function showHelp(t) {
+  var scotty = sinon.stub();
+  var helpStub = sinon.stub();
+  var mockCli = {
+    input: [],
+    flags: {},
+    showHelp: helpStub
+  };
+
+  cli.__set__({
+    cli: mockCli
+  });
+  cli.init(scotty);
+  t.assert(helpStub.calledOnce);
+  t.end();
+});
+
+
