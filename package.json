@@ -1,6 +1,6 @@
 {
   "name": "scotty-cli",
-  "version": "0.1.1-c",
+  "version": "0.1.1-d",
   "description": "The Scotty CLI is used to manage Git repositories remotely from the command line",
   "main": "index.js",
   "repository": "https://github.com/ffffranklin/scotty.git",
