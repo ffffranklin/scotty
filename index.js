@@ -20,7 +20,6 @@ module.exports = function scotty(conf) {
         localRepoPath: localRepoPath,
         hostRepoName: hostRepoName
       };
-
       var prom = promise.resolve().then(
         repoManager.cloneRepo(opts)
       ).then(
@@ -29,7 +28,7 @@ module.exports = function scotty(conf) {
         repoManager.makeRemoteServerWriteable(opts, conf.server)
       ).then(
         repoManager.cleanUp(opts, conf.server)
-      ).then(function () {
+      ).then(function() {
         log(
           [
             'Repo Ready Captain!\r\n',
@@ -43,6 +42,7 @@ module.exports = function scotty(conf) {
           opts.cloneRepoPath
         );
       });
+
       return prom;
     },
     'destroy': function destroy(path) {
