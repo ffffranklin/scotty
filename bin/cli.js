@@ -36,9 +36,9 @@ var cli =  meow({
 function init(cb) {
   var opts = (JSON.stringify(cli.flags) === '{}') ? null : cli.flags;
   if (cli.input.length > 0) {
-    cb(cli.input[0], cli.input.slice(1), opts)
+    cb(cli.input[0], cli.input.slice(1), opts);
   } else {
-    log('scotty: No command provided');
+    cli.showHelp();
   }
 }
 
