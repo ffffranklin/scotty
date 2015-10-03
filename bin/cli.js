@@ -42,7 +42,9 @@ function init(cb) {
   }
 }
 
-init(scotty.run);
+if (require.main === module) {
+  init(scotty.run);
+}
 
 module.exports = {
   init: init
