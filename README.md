@@ -40,7 +40,7 @@ The NPM package requires that you have ssh installed as it depends on it heavily
    DS_GIT_REPO_PATH=/volume1/git
    ```
 
-## Methods
+## Usage
 
 ### list
 
