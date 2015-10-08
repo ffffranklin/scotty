@@ -8,6 +8,7 @@
 
 /.idea
 /.sass-cache
+/.vagrant
 /.env
 /node_modules
 /coverage
