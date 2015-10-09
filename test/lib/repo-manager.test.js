@@ -4,7 +4,8 @@ var sinon = require('sinon');
 var format = require('util').format;
 var repoManager = rewire('../../lib/repo-manager');
 var logSpy = sinon.spy();
-var execStub = sinon.spy(function (comm, cb) {
+var runCommandSpy = sinon.spy();
+var execSpy = sinon.spy(function (comm, cb) {
   //run callback that calls log module
   var err = null;
   var data = 'test\ndata';
@@ -28,8 +29,26 @@ var mockConf = {
 };
 
 repoManager.__set__({
-  exec: execStub,
+  exec: execSpy,
+  runCommand: runCommandSpy,
   log: logSpy
+});
+
+test('repoManager.cleanUp should remove temp repo', function (t) {
+  var mockOpts = {
+    cloneRepoPath: 'test.git'
+  };
+  var cmd = format (
+    'rm -rf %s',
+    mockOpts.cloneRepoPath
+  );
+  //todo remove unused conf arg in source
+  repoManager.cleanUp(mockOpts);
+  t.assert(runCommandSpy.calledOnce);
+  t.equal(runCommandSpy.args[0][0], cmd);
+  t.equal(runCommandSpy.args[0][1], 'Cleaning Up');
+  runCommandSpy.reset();
+  t.end();
 });
 
 test('repoManager.remoteDelete should run remote delete via ssh', function (t) {
@@ -43,9 +62,9 @@ test('repoManager.remoteDelete should run remote delete via ssh', function (t) {
     repo
   );
   repoManager.remoteDelete(repo, mockConf);
-  t.assert(execStub.calledOnce);
-  t.equal(execStub.args[0][0], cmd);
-  execStub.reset();
+  t.assert(execSpy.calledOnce);
+  t.equal(execSpy.args[0][0], cmd);
+  execSpy.reset();
   logSpy.reset();
   t.end();
 });
@@ -60,9 +79,9 @@ test('repoManager.remoteList should run ssh command', function (t) {
   );
 
   repoManager.remoteList(opts);
-  t.assert(execStub.calledOnce);
-  t.assert(execStub.calledWith(cmd));
-  execStub.reset();
+  t.assert(execSpy.calledOnce);
+  t.assert(execSpy.calledWith(cmd));
+  execSpy.reset();
   logSpy.reset();
   t.end();
 });
@@ -77,7 +96,7 @@ test('repoManager.remoteList should call log', function(t) {
     opts.host,
     opts.repoPath
   ));
-  execStub.reset();
+  execSpy.reset();
   logSpy.reset();
   t.end()
 });
