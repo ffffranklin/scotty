@@ -34,6 +34,27 @@ repoManager.__set__({
   log: logSpy
 });
 
+test('repoManager.makeRemoteServerWriteable should change permissions', function (t) {
+  var mockOpts = {
+    cloneRepoPath: 'test.git'
+  };
+  var cmd = format (
+    'ssh -p%d %s@%s chmod -R g+rwX %s/%s',
+    mockConf.server.port,
+    mockConf.server.user,
+    mockConf.server.host,
+    mockConf.server.repoPath,
+    mockOpts.cloneRepoPath
+  );
+  //todo remove unused conf arg in source
+  repoManager.makeRemoteServerWriteable(mockOpts, mockConf.server);
+  t.assert(runCommandSpy.calledOnce);
+  t.equal(runCommandSpy.args[0][0], cmd);
+  t.equal(runCommandSpy.args[0][1], 'Fixing permissions');
+  runCommandSpy.reset();
+  t.end();
+});
+
 test('repoManager.cleanUp should remove temp repo', function (t) {
   var mockOpts = {
     cloneRepoPath: 'test.git'
