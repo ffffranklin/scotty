@@ -9,7 +9,9 @@ var execSpy = sinon.spy(function (comm, cb) {
   //run callback that calls log module
   var err = null;
   var data = 'test\ndata';
-  cb(err, data)
+  try {
+    cb(err, data)
+  }catch (e) { }
 });
 
 var mockOpts = {
@@ -28,7 +30,7 @@ var mockConf = {
   }
 };
 
-repoManager.__set__({
+var unsetRepoManager = repoManager.__set__({
   exec: execSpy,
   runCommand: runCommandSpy,
   log: logSpy
@@ -120,5 +122,25 @@ test('repoManager.remoteList should call log', function(t) {
   execSpy.reset();
   logSpy.reset();
   t.end()
+});
+
+test('repoManager.__runCommand should execute command', function(t) {
+  var repoManager = rewire('../../lib/repo-manager');
+  var msg = 'Test command';
+  var cmd = 'foobar --baz';
+  var promise;
+
+  repoManager.__set__({
+    exec: execSpy,
+    log: logSpy
+  });
+  promise = repoManager.__runCommand(cmd, msg)()
+  t.assert(logSpy.calledThrice, 'logger called');
+  t.equal(logSpy.args[0][0], msg, 'logs msg');
+  t.equal(logSpy.args[1][1], cmd, 'logs command');
+  t.assert(execSpy.calledOnce, 'exec called');
+  execSpy.reset();
+  logSpy.reset();
+  t.end();
 });
 
