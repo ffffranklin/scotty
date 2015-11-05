@@ -36,6 +36,20 @@ var unsetRepoManager = repoManager.__set__({
   log: logSpy
 });
 
+test('clone repo', function (t) {
+  var mockOpts = {
+    localRepoPath: 'baz/bar',
+    cloneRepoPath: 'foo/bar'
+  }
+  var cmd = 'git clone --bare baz/bar foo/bar';
+
+  repoManager.cloneRepo(mockOpts);
+  t.assert(runCommandSpy.calledOnce, 'should call run command');
+  t.equal(runCommandSpy.args[0][0], cmd, 'should run command')
+  runCommandSpy.reset();
+  t.end();
+});
+
 test('repoManager.makeRemoteServerWriteable should change permissions', function (t) {
   var mockOpts = {
     cloneRepoPath: 'test.git'
