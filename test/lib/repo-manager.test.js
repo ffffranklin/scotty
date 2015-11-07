@@ -50,6 +50,24 @@ test('clone repo', function (t) {
   t.end();
 });
 
+test('copy repo', function (t) {
+  var mockOpts = {
+    cloneRepoPath: 'baz/bar'
+  }
+  var mockConf = {
+    port: 1337,
+    host: 'myhost',
+    repoPath: '/path'
+  }
+  var cmd = 'scp -r -P1337 baz/bar root@myhost:/path';
+
+  repoManager.copyRepoToServer(mockOpts, mockConf);
+  t.assert(runCommandSpy.calledOnce, 'should call run command');
+  t.equal(runCommandSpy.args[0][0], cmd, 'should run command')
+  runCommandSpy.reset();
+  t.end();
+});
+
 test('repoManager.makeRemoteServerWriteable should change permissions', function (t) {
   var mockOpts = {
     cloneRepoPath: 'test.git'
