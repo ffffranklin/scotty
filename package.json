@@ -30,7 +30,7 @@
     "meow": "^3.3.0"
   },
   "devDependencies": {
-    "eslint": "^1.4.1",
+    "eslint": "^6.1.0",
     "eslint-config-defaults": "^6.0.0",
     "faucet": "0.0.1",
     "gulp": "^3.9.0",
