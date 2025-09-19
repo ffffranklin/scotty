@@ -3,7 +3,6 @@ env:
 
 extends:
   - "eslint:recommended"
-  - "defaults/configurations/google"
 
 rules:
   no-console: 0

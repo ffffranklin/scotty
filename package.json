@@ -27,16 +27,17 @@
     "scotty": "bin/cli.js"
   },
   "dependencies": {
-    "bluebird": "^2.10.0",
+    "bluebird": "^3.7.2",
     "colors": "^1.1.2",
     "dotenv": "^1.2.0",
     "lodash": "4.17.21",
     "meow": "^3.3.0"
   },
   "devDependencies": {
-    "eslint": "^1.4.1",
-    "eslint-config-defaults": "^6.0.0",
-    "faucet": "0.0.1",
+    "@eslint/js": "^9.35.0",
+    "eslint": "^9.35.0",
+    "faucet": "^0.0.4",
+    "globals": "^16.4.0",
     "gulp": "^5.0.1",
     "gulp-eslint": "^6.0.0",
     "gulp-shell": "^0.8.0",
