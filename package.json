@@ -30,18 +30,18 @@
     "bluebird": "^2.10.0",
     "colors": "^1.1.2",
     "dotenv": "^1.2.0",
-    "lodash": "^3.10.1",
+    "lodash": "4.17.21",
     "meow": "^3.3.0"
   },
   "devDependencies": {
     "eslint": "^1.4.1",
     "eslint-config-defaults": "^6.0.0",
     "faucet": "0.0.1",
-    "gulp": "^3.9.0",
-    "gulp-eslint": "^1.0.0",
-    "gulp-shell": "^0.4.3",
-    "rewire": "^2.3.4",
+    "gulp": "^5.0.1",
+    "gulp-eslint": "^6.0.0",
+    "gulp-shell": "^0.8.0",
+    "rewire": "^9.0.1",
     "sinon": "^1.16.1",
-    "tape": "^4.2.0"
+    "tape": "^5.9.0"
   }
 }
