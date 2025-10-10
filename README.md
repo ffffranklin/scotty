@@ -1,13 +1,14 @@
 ```
-                     
-                     
- _   _  ____/__/_    
+
+
+ _   _  ____/__/_
 /_)_(__(_) (__(__(_/_
-                .-/  
-               (_/   
+                .-/
+               (_/
 ```
 
 [![Build Status](https://img.shields.io/travis/ffffranklin/scotty/master.svg)](https://travis-ci.org/ffffranklin/scotty)
+[![Renovate Enabled](https://img.shields.io/badge/renovate-enabled-brightgreen.svg)](https://renovatebot.com/)
 [![Dependency Status](https://img.shields.io/david/ffffranklin/scotty.svg)](https://david-dm.org/ffffranklin/scotty)
 [![Test Coverage](https://img.shields.io/codeclimate/coverage/github/ffffranklin/scotty.svg)](https://codeclimate.com/github/ffffranklin/scotty/coverage)
 [![Code Climate](https://img.shields.io/codeclimate/github/ffffranklin/scotty.svg)](https://codeclimate.com/github/ffffranklin/scotty)
@@ -26,7 +27,7 @@ The NPM package requires that you have ssh installed as it depends on it heavily
  ```
  $ npm install -g scotty-cli
  ```
- 
+
  2. Add environment variables
   * `DS_HOST` Host name or IP that your server can be accessed from the client machine
   * `DS_HOST_PORT` Host port that your server can be access from
@@ -50,7 +51,7 @@ The NPM package requires that you have ssh installed as it depends on it heavily
 $ scotty list
 ```
 
-### add 
+### add
 
 `add` will clone your local repo to the server as a bare repo that you can continue to work from
 
