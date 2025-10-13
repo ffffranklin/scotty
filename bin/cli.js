@@ -1,15 +1,16 @@
 #! /usr/bin/env node
 
-'use strict';
+import 'colors';
+import dotenv from 'dotenv';
 
-require('colors');
-require('dotenv').config({ quiet: true });
+dotenv.config({ quiet: true });
 
-var Config = require('../config');
-var conf = new Config();
-var scotty = require('../')(conf);
-var pkg = require('../package.json');
-var meow = require('meow');
+import { Config } from '../config.js';
+import scotty from '../index.js';
+import pkg from '../package.json' with { type: 'json' };
+import meow  from 'meow';
+
+scotty(new Config());
 
 var cli =  meow({
   help: `
@@ -38,6 +39,7 @@ var cli =  meow({
     ${'Tips'.white.bold}
       Put options in .bashrc instead of using flags for convenience
   `,
+  importMeta: import.meta,
   pkg: pkg
 });
 
@@ -50,10 +52,10 @@ function init(cb) {
   }
 }
 
-if (require.main === module) {
+if (import.meta.main) {
   init(scotty.run);
 }
 
-module.exports = {
-  init: init
-};
+export default {
+  init
+}

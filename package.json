@@ -3,6 +3,7 @@
   "version": "0.1.1-d",
   "description": "The Scotty CLI is used to manage Git repositories remotely from the command line",
   "main": "index.js",
+  "type": "module",
   "repository": "https://github.com/ffffranklin/scotty.git",
   "scripts": {
     "test": "npm run test:lint; npm run test:unit",

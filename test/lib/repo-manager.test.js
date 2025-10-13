@@ -1,27 +1,26 @@
-var test = require('tape');
-var rewire = require('rewire');
-var sinon = require('sinon');
-var format = require('util').format;
-var repoManager = rewire('../../lib/repo-manager');
-var logSpy = sinon.spy();
-var runCommandSpy = sinon.spy();
-var execSpy = sinon.spy(function (comm, cb) {
+import test from 'tape';
+import sinon from 'sinon';
+import { format } from 'util';
+import repoManager, {runCommand} from '../../lib/repo-manager.js';
+const logSpy = sinon.spy();
+const runCommandSpy = sinon.spy();
+const execSpy = sinon.spy(function (comm, cb) {
   //run callback that calls log module
-  var err = null;
-  var data = 'test\ndata';
+  const err = null;
+  const data = 'test\ndata';
   try {
     cb(err, data)
   }catch (e) { }
 });
 
-var mockOpts = {
+let mockOpts = {
   host: '10.0.0.20',
   port: '1969',
   user: 'barUser',
   repoPath: '/new/path/to/repo'
 };
 
-var mockConf = {
+const mockConf = {
   server: {
     host: '10.0.0.15',
     port: '1337',
@@ -30,18 +29,18 @@ var mockConf = {
   }
 };
 
-var unsetRepoManager = repoManager.__set__({
-  exec: execSpy,
-  runCommand: runCommandSpy,
-  log: logSpy
-});
+// const unsetRepoManager = repoManager.__set__({
+//   exec: execSpy,
+//   runCommand: runCommandSpy,
+//   log: logSpy
+// });
 
 test('clone repo', function (t) {
-  var mockOpts = {
+  const mockOpts = {
     localRepoPath: 'baz/bar',
     cloneRepoPath: 'foo/bar'
   }
-  var cmd = 'git clone --bare baz/bar foo/bar';
+  const cmd = 'git clone --bare baz/bar foo/bar';
 
   repoManager.cloneRepo(mockOpts);
   t.assert(runCommandSpy.calledOnce, 'should call run command');
@@ -51,15 +50,15 @@ test('clone repo', function (t) {
 });
 
 test('copy repo', function (t) {
-  var mockOpts = {
+  const mockOpts = {
     cloneRepoPath: 'baz/bar'
   }
-  var mockConf = {
+  const mockConf = {
     port: 1337,
     host: 'myhost',
     repoPath: '/path'
   }
-  var cmd = 'scp -r -P1337 baz/bar root@myhost:/path';
+  const cmd = 'scp -r -P1337 baz/bar root@myhost:/path';
 
   repoManager.copyRepoToServer(mockOpts, mockConf);
   t.assert(runCommandSpy.calledOnce, 'should call run command');
@@ -69,10 +68,10 @@ test('copy repo', function (t) {
 });
 
 test('repoManager.makeRemoteServerWriteable should change permissions', function (t) {
-  var mockOpts = {
+  const mockOpts = {
     cloneRepoPath: 'test.git'
   };
-  var cmd = format (
+  const cmd = format (
     'ssh -p%d %s@%s chmod -R g+rwX %s/%s',
     mockConf.server.port,
     mockConf.server.user,
@@ -90,10 +89,10 @@ test('repoManager.makeRemoteServerWriteable should change permissions', function
 });
 
 test('repoManager.cleanUp should remove temp repo', function (t) {
-  var mockOpts = {
+  const mockOpts = {
     cloneRepoPath: 'test.git'
   };
-  var cmd = format (
+  const cmd = format (
     'rm -rf %s',
     mockOpts.cloneRepoPath
   );
@@ -107,8 +106,8 @@ test('repoManager.cleanUp should remove temp repo', function (t) {
 });
 
 test('repoManager.remoteDelete should run remote delete via ssh', function (t) {
-  var repo = 'repo.git';
-  var cmd = format(
+  const repo = 'repo.git';
+  const cmd = format(
     'ssh -p%d %s@%s rm -rf %s/%s',
     mockConf.port,
     mockConf.user,
@@ -125,8 +124,8 @@ test('repoManager.remoteDelete should run remote delete via ssh', function (t) {
 });
 
 test('repoManager.remoteList should run ssh command', function (t) {
-  var opts = mockOpts;
-  var cmd = format('ssh %s@%s -p%d ls %s',
+  const opts = mockOpts;
+  const cmd = format('ssh %s@%s -p%d ls %s',
     opts.user,
     opts.host,
     opts.port,
@@ -142,8 +141,8 @@ test('repoManager.remoteList should run ssh command', function (t) {
 });
 
 test('repoManager.remoteList should call log', function(t) {
-  var opts = mockOpts;
-  var msg;
+  const opts = mockOpts;
+
   repoManager.remoteList(opts);
   t.assert(logSpy.calledTwice);
   t.assert(logSpy.firstCall.calledWith(
@@ -157,16 +156,16 @@ test('repoManager.remoteList should call log', function(t) {
 });
 
 test('repoManager.__runCommand should execute command', function(t) {
-  var repoManager = rewire('../../lib/repo-manager');
-  var msg = 'Test command';
-  var cmd = 'foobar --baz';
-  var promise;
+  // const repoManager = rewire('../../lib/repo-manager');
+  const msg = 'Test command';
+  const cmd = 'foobar --baz';
+  let promise;
 
-  repoManager.__set__({
-    exec: execSpy,
-    log: logSpy
-  });
-  promise = repoManager.__runCommand(cmd, msg)()
+  // repoManager.__set__({
+  //   exec: execSpy,
+  //   log: logSpy
+  // });
+  runCommand(cmd, msg)()
   t.assert(logSpy.calledThrice, 'logger called');
   t.equal(logSpy.args[0][0], msg, 'logs msg');
   t.equal(logSpy.args[1][1], cmd, 'logs command');
