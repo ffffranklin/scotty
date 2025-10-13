@@ -34,7 +34,7 @@
     "colors": "^1.1.2",
     "dotenv": "^17.0.0",
     "lodash": "4.17.21",
-    "meow": "^9.0.0",
+    "meow": "^14.0.0",
     "nyc": "^17.1.0"
   },
   "devDependencies": {
