@@ -46,7 +46,7 @@ test('clone repo', function (t) {
   repoManager.cloneRepo(mockOpts);
   t.assert(runCommandSpy.calledOnce, 'should call run command');
   t.equal(runCommandSpy.args[0][0], cmd, 'should run command')
-  runCommandSpy.reset();
+  runCommandSpy.resetHistory();
   t.end();
 });
 
@@ -64,7 +64,7 @@ test('copy repo', function (t) {
   repoManager.copyRepoToServer(mockOpts, mockConf);
   t.assert(runCommandSpy.calledOnce, 'should call run command');
   t.equal(runCommandSpy.args[0][0], cmd, 'should run command')
-  runCommandSpy.reset();
+  runCommandSpy.resetHistory();
   t.end();
 });
 
@@ -85,7 +85,7 @@ test('repoManager.makeRemoteServerWriteable should change permissions', function
   t.assert(runCommandSpy.calledOnce);
   t.equal(runCommandSpy.args[0][0], cmd);
   t.equal(runCommandSpy.args[0][1], 'Fixing permissions');
-  runCommandSpy.reset();
+  runCommandSpy.resetHistory();
   t.end();
 });
 
@@ -102,7 +102,7 @@ test('repoManager.cleanUp should remove temp repo', function (t) {
   t.assert(runCommandSpy.calledOnce);
   t.equal(runCommandSpy.args[0][0], cmd);
   t.equal(runCommandSpy.args[0][1], 'Cleaning Up');
-  runCommandSpy.reset();
+  runCommandSpy.resetHistory();
   t.end();
 });
 
@@ -119,8 +119,8 @@ test('repoManager.remoteDelete should run remote delete via ssh', function (t) {
   repoManager.remoteDelete(repo, mockConf);
   t.assert(execSpy.calledOnce);
   t.equal(execSpy.args[0][0], cmd);
-  execSpy.reset();
-  logSpy.reset();
+  execSpy.resetHistory();
+  logSpy.resetHistory();
   t.end();
 });
 
@@ -136,8 +136,8 @@ test('repoManager.remoteList should run ssh command', function (t) {
   repoManager.remoteList(opts);
   t.assert(execSpy.calledOnce);
   t.assert(execSpy.calledWith(cmd));
-  execSpy.reset();
-  logSpy.reset();
+  execSpy.resetHistory();
+  logSpy.resetHistory();
   t.end();
 });
 
@@ -151,8 +151,8 @@ test('repoManager.remoteList should call log', function(t) {
     opts.host,
     opts.repoPath
   ));
-  execSpy.reset();
-  logSpy.reset();
+  execSpy.resetHistory();
+  logSpy.resetHistory();
   t.end()
 });
 
@@ -171,8 +171,8 @@ test('repoManager.__runCommand should execute command', function(t) {
   t.equal(logSpy.args[0][0], msg, 'logs msg');
   t.equal(logSpy.args[1][1], cmd, 'logs command');
   t.assert(execSpy.calledOnce, 'exec called');
-  execSpy.reset();
-  logSpy.reset();
+  execSpy.resetHistory();
+  logSpy.resetHistory();
   t.end();
 });
 
