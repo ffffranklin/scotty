@@ -43,12 +43,12 @@ var cli =  meow({
   pkg: pkg
 });
 
-function init(cb) {
-  var opts = (JSON.stringify(cli.flags) === '{}') ? null : cli.flags;
-  if (cli.input.length > 0) {
-    cb(cli.input[0], cli.input.slice(1), opts);
+function init(cb, client=cli) {
+  var opts = (JSON.stringify(client.flags) === '{}') ? null : client.flags;
+  if (client.input.length > 0) {
+    cb(client.input[0], client.input.slice(1), opts);
   } else {
-    cli.showHelp();
+    client.showHelp();
   }
 }
 

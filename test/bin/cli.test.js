@@ -1,6 +1,5 @@
 import test from 'tape';
 import sinon from 'sinon';
-import rewire from 'rewire';
 
 // const cli = rewire('../../bin/cli.js');
 import cli from '../../bin/cli.js';
@@ -15,11 +14,7 @@ test('cli.init should pass input and opts to scotty', function passInputAndOptio
     }
   };
 
-  console.log(cli)
-  // cli.__set__({
-  //   cli: mockCli
-  // });
-  cli.init(scotty);
+  cli.init(scotty, mockCli);
   t.deepEqual(scotty.args[0], [
     mockCli.input[0],
     mockCli.input.slice(1),
@@ -35,10 +30,7 @@ test('cli.init should pass null options if flags are empty', function nullOption
     flags: {}
   };
 
-  // cli.__set__({
-  //   cli: mockCli
-  // });
-  cli.init(scotty);
+  cli.init(scotty, mockCli);
   t.deepEqual(scotty.args[0], [
     mockCli.input[0],
     mockCli.input.slice(1),
@@ -56,10 +48,7 @@ test('cli.init should show help when no commands passed', function showHelp(t) {
     showHelp: helpStub
   };
 
-  // cli.__set__({
-  //   cli: mockCli
-  // });
-  cli.init(scotty);
+  cli.init(scotty, mockCli);
   t.assert(helpStub.calledOnce);
   t.end();
 });
