@@ -3,11 +3,10 @@
 'use strict';
 
 require('colors');
-require('dotenv').load({silent: true});
+require('dotenv').config({ quiet: true });
 
 var Config = require('../config');
 var conf = new Config();
-var log = require('../lib/log');
 var scotty = require('../')(conf);
 var pkg = require('../package.json');
 var meow = require('meow');
