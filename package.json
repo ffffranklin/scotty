@@ -40,11 +40,13 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.35.0",
+    "@types/node": "^24.7.2",
     "eslint": "^9.35.0",
     "faucet": "^0.0.4",
     "globals": "^16.4.0",
     "onchange": "^7.1.0",
     "sinon": "^21.0.0",
-    "tape": "^5.9.0"
+    "tape": "^5.9.0",
+    "typescript": "^5.9.3"
   }
 }
