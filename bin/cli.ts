@@ -10,7 +10,7 @@ import scotty from '../index.js';
 import pkg from '../package.json' with { type: 'json' };
 import meow  from 'meow';
 
-const scottyInst = scotty(new Config());
+const scottyInst = scotty(Config());
 
 const cli =  meow({
   help: `

@@ -28,7 +28,7 @@
     "pnpm": ">=10.14.0"
   },
   "bin": {
-    "scotty": "bin/cli.js"
+    "scotty": "bin/cli.ts"
   },
   "dependencies": {
     "bluebird": "^3.7.2",

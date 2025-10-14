@@ -1,7 +1,7 @@
 import test from 'tape';
 import { Config }  from '../config.js';
 
-const conf = new Config();
+const conf = Config();
 
 test('config has critical properties', function(t) {
   const oldEnv = process.env;

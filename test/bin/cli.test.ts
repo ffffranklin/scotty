@@ -1,7 +1,7 @@
 import test from 'tape';
 import sinon from 'sinon';
 
-import cli from '../../bin/cli.js';
+import cli from '../../bin/cli.ts';
 
 test('cli.init should pass input and opts to scotty', function passInputAndOptions(t) {
   const scotty = sinon.stub();
