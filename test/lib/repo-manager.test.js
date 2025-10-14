@@ -1,17 +1,12 @@
 import test from 'tape';
 import sinon from 'sinon';
 import { format } from 'util';
-import repoManager, {runCommand} from '../../lib/repo-manager.js';
-const logSpy = sinon.spy();
-const runCommandSpy = sinon.spy();
-const execSpy = sinon.spy(function (comm, cb) {
-  //run callback that calls log module
-  const err = null;
-  const data = 'test\ndata';
-  try {
-    cb(err, data)
-  }catch (e) { }
-});
+import RepoManager from '../../lib/repo-manager.js';
+
+const repoManager = new RepoManager();
+const logSpy = sinon.stub(repoManager, '__log');
+const runCommandStub = sinon.stub(repoManager, '__runCommand');
+const asyncExecStub = sinon.stub(repoManager, '__asyncExec');
 
 let mockOpts = {
   host: '10.0.0.20',
@@ -29,12 +24,6 @@ const mockConf = {
   }
 };
 
-// const unsetRepoManager = repoManager.__set__({
-//   exec: execSpy,
-//   runCommand: runCommandSpy,
-//   log: logSpy
-// });
-
 test('clone repo', function (t) {
   const mockOpts = {
     localRepoPath: 'baz/bar',
@@ -43,9 +32,9 @@ test('clone repo', function (t) {
   const cmd = 'git clone --bare baz/bar foo/bar';
 
   repoManager.cloneRepo(mockOpts);
-  t.assert(runCommandSpy.calledOnce, 'should call run command');
-  t.equal(runCommandSpy.args[0][0], cmd, 'should run command')
-  runCommandSpy.resetHistory();
+  t.assert(runCommandStub.calledOnce, 'should call run command');
+  t.equal(runCommandStub.args[0][0], cmd, 'should run command')
+  runCommandStub.resetHistory()
   t.end();
 });
 
@@ -61,9 +50,9 @@ test('copy repo', function (t) {
   const cmd = 'scp -r -P1337 baz/bar root@myhost:/path';
 
   repoManager.copyRepoToServer(mockOpts, mockConf);
-  t.assert(runCommandSpy.calledOnce, 'should call run command');
-  t.equal(runCommandSpy.args[0][0], cmd, 'should run command')
-  runCommandSpy.resetHistory();
+  t.assert(runCommandStub.calledOnce, 'should call run command');
+  t.equal(runCommandStub.args[0][0], cmd, 'should run command')
+  runCommandStub.resetHistory()
   t.end();
 });
 
@@ -81,10 +70,10 @@ test('repoManager.makeRemoteServerWriteable should change permissions', function
   );
   //todo remove unused conf arg in source
   repoManager.makeRemoteServerWriteable(mockOpts, mockConf.server);
-  t.assert(runCommandSpy.calledOnce);
-  t.equal(runCommandSpy.args[0][0], cmd);
-  t.equal(runCommandSpy.args[0][1], 'Fixing permissions');
-  runCommandSpy.resetHistory();
+  t.assert(runCommandStub.calledOnce);
+  t.equal(runCommandStub.args[0][0], cmd);
+  t.equal(runCommandStub.args[0][1], 'Fixing permissions');
+  runCommandStub.resetHistory();
   t.end();
 });
 
@@ -98,10 +87,10 @@ test('repoManager.cleanUp should remove temp repo', function (t) {
   );
   //todo remove unused conf arg in source
   repoManager.cleanUp(mockOpts);
-  t.assert(runCommandSpy.calledOnce);
-  t.equal(runCommandSpy.args[0][0], cmd);
-  t.equal(runCommandSpy.args[0][1], 'Cleaning Up');
-  runCommandSpy.resetHistory();
+  t.assert(runCommandStub.calledOnce);
+  t.equal(runCommandStub.args[0][0], cmd);
+  t.equal(runCommandStub.args[0][1], 'Cleaning Up');
+  runCommandStub.resetHistory();
   t.end();
 });
 
@@ -116,10 +105,9 @@ test('repoManager.remoteDelete should run remote delete via ssh', function (t) {
     repo
   );
   repoManager.remoteDelete(repo, mockConf);
-  t.assert(execSpy.calledOnce);
-  t.equal(execSpy.args[0][0], cmd);
-  execSpy.resetHistory();
-  logSpy.resetHistory();
+  t.assert(runCommandStub.calledOnce);
+  t.equal(runCommandStub.args[0][0], cmd);
+  runCommandStub.resetHistory();
   t.end();
 });
 
@@ -133,10 +121,9 @@ test('repoManager.remoteList should run ssh command', function (t) {
   );
 
   repoManager.remoteList(opts);
-  t.assert(execSpy.calledOnce);
-  t.assert(execSpy.calledWith(cmd));
-  execSpy.resetHistory();
-  logSpy.resetHistory();
+  t.assert(runCommandStub.calledOnce);
+  t.assert(runCommandStub.calledWith(cmd));
+  runCommandStub.resetHistory();
   t.end();
 });
 
@@ -144,34 +131,27 @@ test('repoManager.remoteList should call log', function(t) {
   const opts = mockOpts;
 
   repoManager.remoteList(opts);
-  t.assert(logSpy.calledTwice);
-  t.assert(logSpy.firstCall.calledWith(
-    'Listing Repos stored in %s:%s',
-    opts.host,
-    opts.repoPath
-  ));
-  execSpy.resetHistory();
-  logSpy.resetHistory();
+  t.assert(runCommandStub.calledOnce);
+  t.equal(runCommandStub.args[0][1], `Listing Repos stored in ${opts.host}:${opts.repoPath}`);
+  runCommandStub.resetHistory();
   t.end()
 });
 
-test('repoManager.__runCommand should execute command', function(t) {
-  // const repoManager = rewire('../../lib/repo-manager');
+test('repoManager.__runCommand should execute asyncExec command', function(t) {
   const msg = 'Test command';
   const cmd = 'foobar --baz';
-  let promise;
 
-  // repoManager.__set__({
-  //   exec: execSpy,
-  //   log: logSpy
-  // });
-  runCommand(cmd, msg)()
-  t.assert(logSpy.calledThrice, 'logger called');
-  t.equal(logSpy.args[0][0], msg, 'logs msg');
-  t.equal(logSpy.args[1][1], cmd, 'logs command');
-  t.assert(execSpy.calledOnce, 'exec called');
-  execSpy.resetHistory();
-  logSpy.resetHistory();
-  t.end();
+  runCommandStub.restore();
+  asyncExecStub.resolves('success')
+
+  repoManager.__runCommand(cmd, msg)().then(()=> {
+    t.assert(logSpy.calledThrice, 'logger called');
+    t.equal(logSpy.args[0][0], msg, 'logs msg');
+    t.equal(logSpy.args[1][1], cmd, 'logs command');
+    t.assert(asyncExecStub.calledOnce, 'exec called');
+    logSpy.resetHistory();
+    asyncExecStub.resetHistory();
+    t.end();
+  })
 });
 

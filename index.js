@@ -1,9 +1,11 @@
 import promise from 'bluebird';
-import repoManager from './lib/repo-manager.js';
+import RepoManager from './lib/repo-manager.js';
 import log from './lib/log.js';
 import _ from 'lodash';
 
 export default function scotty(conf) {
+  const repoManager = new RepoManager();
+
   const methods =  {
     'list': function list(opts) {
       repoManager.remoteList(opts);

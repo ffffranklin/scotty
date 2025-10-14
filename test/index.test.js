@@ -12,7 +12,8 @@ const mockConf = {
 };
 
 import scottyModule from '../index.js';
-const scotty = scottyModule(mockConf);
+
+let scotty = scottyModule(mockConf);
 
 test('scotty should have list command', function (t) {
   t.ok(scotty.__methods['list']);
@@ -46,8 +47,9 @@ test('scotty.run should apply args and merge custom config to method', function(
 });
 
 test('scotty.run should set port 22 as default port', function(t) {
+  const oldScotty = scotty;
+  scotty = scottyModule(null);
   const spyName = 'fooBarSpy';
-  // const scotty = require('../')(null);
   const spy = scotty.__methods[spyName] = sinon.stub();
   const args = ['arg1', 'arg2'];
 
@@ -55,6 +57,7 @@ test('scotty.run should set port 22 as default port', function(t) {
   t.assert(spy.calledOnce);
   t.deepEqual(spy.args[0], [args[0], args[1], {port:22}]);
   delete scotty.__methods[spyName];
+  scotty = oldScotty;
   t.end();
 });
 
@@ -95,12 +98,10 @@ test('scotty.add should call methods in correct order', function (t) {
 });
 
 test('scotty.add should print repo origin update instructions', function(t) {
-  const logSpy = sinon.stub();
+  // const logSpy = sinon.stub();
   const localPath = 'test';
   const hostPath = 'test-test';
-  // const unwire = scottyModule.__set__({
-  //   log: logSpy
-  // });
+  const logSpy = sinon.spy(console, 'log');
   scotty.__repoManager.cloneRepo = sinon.stub().returns(sinon.stub());
   scotty.__repoManager.copyRepoToServer = sinon.stub().returns(sinon.stub());
   scotty.__repoManager.makeRemoteServerWriteable = sinon.stub().returns(sinon.stub());
@@ -115,7 +116,7 @@ test('scotty.add should print repo origin update instructions', function(t) {
       mockConf.server.repoPath,
       hostPath + '.git'
     ])
-    unwire();
+    logSpy.restore()
     t.end()
   });
 });
