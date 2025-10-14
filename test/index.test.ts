@@ -11,7 +11,7 @@ const mockConf = {
   }
 };
 
-import scottyModule from '../index.js';
+import scottyModule from '../index.ts';
 
 let scotty = scottyModule(mockConf);
 

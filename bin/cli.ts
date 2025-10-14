@@ -6,7 +6,7 @@ import dotenv from 'dotenv';
 dotenv.config({ quiet: true });
 
 import { Config } from '../config.js';
-import scotty from '../index.js';
+import scotty from '../index.ts';
 import pkg from '../package.json' with { type: 'json' };
 import meow  from 'meow';
 
