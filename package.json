@@ -7,11 +7,11 @@
   "repository": "https://github.com/ffffranklin/scotty.git",
   "scripts": {
     "test": "npm run test:lint; npm run test:unit",
-    "test:unit": "tape 'test/**/*.test.js' | faucet",
+    "test:unit": "tape 'test/**/*.test.ts' | faucet",
     "test:lint": "eslint",
     "cover": "nyc --reporter=lcov --reporter=text-summary npm run test:unit",
     "codeclimate": "npm run cover && codeclimate-test-reporter < coverage/lcov.info",
-    "watch": "onchange '**/*.js' 'test/**/*.js' -- npm test"
+    "watch": "onchange '**/*.ts' 'test/**/*.ts' -- npm test"
   },
   "keywords": [
     "synology",
