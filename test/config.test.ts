@@ -1,7 +1,5 @@
 import test from 'tape';
-import { Config }  from '../config.js';
-
-const conf = Config();
+import { Config }  from '../config.ts';
 
 test('config has critical properties', function(t) {
   const oldEnv = process.env;
@@ -12,6 +10,8 @@ test('config has critical properties', function(t) {
     DS_PRIMARY_USER: 'user',
     DS_GIT_REPO_PATH: '/path/to/repos'
   });
+
+  const conf = Config();
 
   t.ok(conf.server.host);
   t.ok(conf.server.port);
