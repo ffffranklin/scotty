@@ -10,9 +10,9 @@ import scotty from '../index.js';
 import pkg from '../package.json' with { type: 'json' };
 import meow  from 'meow';
 
-scotty(new Config());
+const scottyInst = scotty(new Config());
 
-var cli =  meow({
+const cli =  meow({
   help: `
     Usage
       $ ${'scotty'.red.bold} ${'[COMMAND]'.green.bold} ${'[OPTIONS]'.magenta.bold}
@@ -44,7 +44,8 @@ var cli =  meow({
 });
 
 function init(cb, client=cli) {
-  var opts = (JSON.stringify(client.flags) === '{}') ? null : client.flags;
+  const opts = (JSON.stringify(client.flags) === '{}') ? null : client.flags;
+
   if (client.input.length > 0) {
     cb(client.input[0], client.input.slice(1), opts);
   } else {
@@ -53,7 +54,7 @@ function init(cb, client=cli) {
 }
 
 if (import.meta.main) {
-  init(scotty.run);
+  init(scottyInst.run);
 }
 
 export default {

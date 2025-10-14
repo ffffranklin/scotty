@@ -1,7 +1,6 @@
 import test from 'tape';
 import sinon from 'sinon';
 
-// const cli = rewire('../../bin/cli.js');
 import cli from '../../bin/cli.js';
 
 test('cli.init should pass input and opts to scotty', function passInputAndOptions(t) {
