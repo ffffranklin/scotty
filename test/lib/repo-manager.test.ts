@@ -1,7 +1,7 @@
 import test from 'tape';
 import sinon from 'sinon';
-import { format } from 'util';
-import RepoManager from '../../lib/repo-manager.js';
+import { format } from 'node:util';
+import RepoManager from '../../lib/repo-manager.ts';
 
 const repoManager = new RepoManager();
 const logSpy = sinon.stub(repoManager, '__log');

@@ -1,6 +1,6 @@
 import promise from 'bluebird';
-import RepoManager from './lib/repo-manager.js';
-import log from './lib/log.js';
+import RepoManager from './lib/repo-manager.ts';
+import log from './lib/log.ts';
 import _ from 'lodash';
 
 export default function scotty(conf) {

@@ -2,16 +2,16 @@
   "name": "scotty-cli",
   "version": "0.1.1-d",
   "description": "The Scotty CLI is used to manage Git repositories remotely from the command line",
-  "main": "index.js",
+  "main": "index.ts",
   "type": "module",
   "repository": "https://github.com/ffffranklin/scotty.git",
   "scripts": {
     "test": "npm run test:lint; npm run test:unit",
-    "test:unit": "tape 'test/**/*.test.js' | faucet",
+    "test:unit": "tape 'test/**/*.test.ts' | faucet",
     "test:lint": "eslint",
     "cover": "nyc --reporter=lcov --reporter=text-summary npm run test:unit",
     "codeclimate": "npm run cover && codeclimate-test-reporter < coverage/lcov.info",
-    "watch": "onchange '**/*.js' 'test/**/*.js' -- npm test"
+    "watch": "onchange '**/*.ts' 'test/**/*.ts' -- npm test"
   },
   "keywords": [
     "synology",
@@ -28,7 +28,7 @@
     "pnpm": ">=10.14.0"
   },
   "bin": {
-    "scotty": "bin/cli.js"
+    "scotty": "bin/cli.ts"
   },
   "dependencies": {
     "bluebird": "^3.7.2",
@@ -36,15 +36,18 @@
     "dotenv": "^17.0.0",
     "lodash": "4.17.21",
     "meow": "^14.0.0",
-    "nyc": "^17.1.0"
+    "nyc": "^17.1.0",
+    "typescript-eslint": "^8.46.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.35.0",
+    "@types/node": "^24.7.2",
     "eslint": "^9.35.0",
     "faucet": "^0.0.4",
     "globals": "^16.4.0",
     "onchange": "^7.1.0",
     "sinon": "^21.0.0",
-    "tape": "^5.9.0"
+    "tape": "^5.9.0",
+    "typescript": "^5.9.3"
   }
 }
