@@ -1,10 +1,8 @@
-var test = require('tape');
-var rewire = require('rewire');
-var sinon = require('sinon');
-var _ = require('lodash');
-var format = require('util').format;
+import test from 'tape';
+import sinon from 'sinon';
+import _ from 'lodash';
 
-var mockConf = {
+const mockConf = {
   server: {
     host: '10.0.0.15',
     port: '1337',
@@ -13,8 +11,9 @@ var mockConf = {
   }
 };
 
-var scottyModule = rewire('../');
-var scotty = scottyModule(mockConf);
+import scottyModule from '../index.js';
+
+let scotty = scottyModule(mockConf);
 
 test('scotty should have list command', function (t) {
   t.ok(scotty.__methods['list']);
@@ -22,9 +21,9 @@ test('scotty should have list command', function (t) {
 });
 
 test('scotty.run should apply args and default config to method', function(t) {
-  var spyName = 'fooSpy';
-  var spy = scotty.__methods[spyName] = sinon.stub();
-  var args = ['arg1', 'arg2'];
+  const spyName = 'fooSpy';
+  const spy = scotty.__methods[spyName] = sinon.stub();
+  const args = ['arg1', 'arg2'];
 
   scotty.run(spyName, args);
   t.assert(spy.calledOnce);
@@ -34,11 +33,11 @@ test('scotty.run should apply args and default config to method', function(t) {
 });
 
 test('scotty.run should apply args and merge custom config to method', function(t) {
-  var spyName = 'barSpy';
-  var spy = scotty.__methods[spyName] = sinon.stub();
-  var args = ['arg1', 'arg2'];
-  var opts = { user: 'customUser'};
-  var mergedOpts = _.extend({}, mockConf.server, opts);
+  const spyName = 'barSpy';
+  const spy = scotty.__methods[spyName] = sinon.stub();
+  const args = ['arg1', 'arg2'];
+  const opts = { user: 'customUser'};
+  const mergedOpts = _.extend({}, mockConf.server, opts);
 
   scotty.run(spyName, args, opts);
   t.assert(spy.calledOnce);
@@ -48,21 +47,23 @@ test('scotty.run should apply args and merge custom config to method', function(
 });
 
 test('scotty.run should set port 22 as default port', function(t) {
-  var spyName = 'fooBarSpy';
-  var scotty = rewire('../')(null);
-  var spy = scotty.__methods[spyName] = sinon.stub();
-  var args = ['arg1', 'arg2'];
+  const oldScotty = scotty;
+  scotty = scottyModule(null);
+  const spyName = 'fooBarSpy';
+  const spy = scotty.__methods[spyName] = sinon.stub();
+  const args = ['arg1', 'arg2'];
 
   scotty.run(spyName, args);
   t.assert(spy.calledOnce);
   t.deepEqual(spy.args[0], [args[0], args[1], {port:22}]);
   delete scotty.__methods[spyName];
+  scotty = oldScotty;
   t.end();
 });
 
 
 test('scotty.list should call remote list command', function (t) {
-  var remoteListSpy = sinon.spy(scotty.__repoManager, 'remoteList');
+  const remoteListSpy = sinon.spy(scotty.__repoManager, 'remoteList');
   scotty.__methods.list(mockConf);
   t.assert(remoteListSpy.calledOnce);
   t.assert(remoteListSpy.calledWithExactly(mockConf));
@@ -72,8 +73,8 @@ test('scotty.list should call remote list command', function (t) {
 
 
 test('scotty.add should call methods in correct order', function (t) {
-  var calledOrder = 0;
-  var inc = function increment () {
+  let calledOrder = 0;
+  const inc = function increment () {
     ++calledOrder;
   }
   scotty.__repoManager.cloneRepo = function () {
@@ -97,12 +98,10 @@ test('scotty.add should call methods in correct order', function (t) {
 });
 
 test('scotty.add should print repo origin update instructions', function(t) {
-  var logSpy = sinon.stub();
-  var localPath = 'test';
-  var hostPath = 'test-test';
-  var unwire = scottyModule.__set__({
-    log: logSpy 
-  });
+  // const logSpy = sinon.stub();
+  const localPath = 'test';
+  const hostPath = 'test-test';
+  const logSpy = sinon.spy(console, 'log');
   scotty.__repoManager.cloneRepo = sinon.stub().returns(sinon.stub());
   scotty.__repoManager.copyRepoToServer = sinon.stub().returns(sinon.stub());
   scotty.__repoManager.makeRemoteServerWriteable = sinon.stub().returns(sinon.stub());
@@ -117,7 +116,7 @@ test('scotty.add should print repo origin update instructions', function(t) {
       mockConf.server.repoPath,
       hostPath + '.git'
     ])
-    unwire();
+    logSpy.restore()
     t.end()
   });
 });
@@ -128,7 +127,7 @@ test('scotty.destroy should throw if no path is provided', function (t) {
 });
 
 test('scotty.destroy should call remote delete command', function (t) {
-  var remoteDeleteSpy = sinon.stub(scotty.__repoManager, 'remoteDelete');
+  const remoteDeleteSpy = sinon.stub(scotty.__repoManager, 'remoteDelete');
   scotty.__methods.destroy('test_repo');
   t.assert(remoteDeleteSpy.calledOnce);
   t.assert(remoteDeleteSpy.calledWithExactly('test_repo', mockConf.server));

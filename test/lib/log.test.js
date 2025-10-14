@@ -1,19 +1,14 @@
-var test = require('tape');
-var sinon = require('sinon');
-var rewire = require('rewire');
-var log = rewire('../../lib/log');
+import test from 'tape';
+import sinon from 'sinon';
+import log from '../../lib/log.js';
 
 test('log should call console.log', function (t) {
-  var stub = sinon.stub();
-  var unsetRewire = log.__set__({
-    console: {
-      log: stub
-    }
-  });
+  const stub = sinon.stub(console, 'log');
 
   log();
+
   t.assert(stub.calledOnce);
-  unsetRewire();
   t.end();
 
+  stub.restore()
 });

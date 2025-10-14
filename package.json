@@ -3,6 +3,7 @@
   "version": "0.1.1-d",
   "description": "The Scotty CLI is used to manage Git repositories remotely from the command line",
   "main": "index.js",
+  "type": "module",
   "repository": "https://github.com/ffffranklin/scotty.git",
   "scripts": {
     "test": "npm run test:lint; npm run test:unit",
@@ -34,7 +35,7 @@
     "colors": "^1.1.2",
     "dotenv": "^17.0.0",
     "lodash": "4.17.21",
-    "meow": "^9.0.0",
+    "meow": "^14.0.0",
     "nyc": "^17.1.0"
   },
   "devDependencies": {
@@ -43,7 +44,6 @@
     "faucet": "^0.0.4",
     "globals": "^16.4.0",
     "onchange": "^7.1.0",
-    "rewire": "^9.0.1",
     "sinon": "^21.0.0",
     "tape": "^5.9.0"
   }

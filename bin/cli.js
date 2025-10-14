@@ -1,17 +1,18 @@
 #! /usr/bin/env node
 
-'use strict';
+import 'colors';
+import dotenv from 'dotenv';
 
-require('colors');
-require('dotenv').config({ quiet: true });
+dotenv.config({ quiet: true });
 
-var Config = require('../config');
-var conf = new Config();
-var scotty = require('../')(conf);
-var pkg = require('../package.json');
-var meow = require('meow');
+import { Config } from '../config.js';
+import scotty from '../index.js';
+import pkg from '../package.json' with { type: 'json' };
+import meow  from 'meow';
 
-var cli =  meow({
+const scottyInst = scotty(new Config());
+
+const cli =  meow({
   help: `
     Usage
       $ ${'scotty'.red.bold} ${'[COMMAND]'.green.bold} ${'[OPTIONS]'.magenta.bold}
@@ -38,22 +39,24 @@ var cli =  meow({
     ${'Tips'.white.bold}
       Put options in .bashrc instead of using flags for convenience
   `,
+  importMeta: import.meta,
   pkg: pkg
 });
 
-function init(cb) {
-  var opts = (JSON.stringify(cli.flags) === '{}') ? null : cli.flags;
-  if (cli.input.length > 0) {
-    cb(cli.input[0], cli.input.slice(1), opts);
+function init(cb, client=cli) {
+  const opts = (JSON.stringify(client.flags) === '{}') ? null : client.flags;
+
+  if (client.input.length > 0) {
+    cb(client.input[0], client.input.slice(1), opts);
   } else {
-    cli.showHelp();
+    client.showHelp();
   }
 }
 
-if (require.main === module) {
-  init(scotty.run);
+if (import.meta.main) {
+  init(scottyInst.run);
 }
 
-module.exports = {
-  init: init
-};
+export default {
+  init
+}

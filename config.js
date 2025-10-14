@@ -1,7 +1,4 @@
-module.exports = function Config() {
-
-  "use strict";
-
+export function Config() {
   return {
     server: {
       host: process.env.DS_HOST,
@@ -10,5 +7,4 @@ module.exports = function Config() {
       repoPath: process.env.DS_GIT_REPO_PATH
     }
   };
-
 };

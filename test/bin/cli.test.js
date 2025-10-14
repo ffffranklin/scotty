@@ -1,11 +1,11 @@
-var test = require('tape');
-var sinon = require('sinon');
-var rewire = require('rewire');
-var cli = rewire('../../bin/cli');
+import test from 'tape';
+import sinon from 'sinon';
+
+import cli from '../../bin/cli.js';
 
 test('cli.init should pass input and opts to scotty', function passInputAndOptions(t) {
-  var scotty = sinon.stub();
-  var mockCli = {
+  const scotty = sinon.stub();
+  const mockCli = {
     input: ['test', 'arg1', 'arg2'],
     flags: {
       'one': 'val',
@@ -13,10 +13,7 @@ test('cli.init should pass input and opts to scotty', function passInputAndOptio
     }
   };
 
-  cli.__set__({
-    cli: mockCli
-  });
-  cli.init(scotty);
+  cli.init(scotty, mockCli);
   t.deepEqual(scotty.args[0], [
     mockCli.input[0],
     mockCli.input.slice(1),
@@ -26,16 +23,13 @@ test('cli.init should pass input and opts to scotty', function passInputAndOptio
 });
 
 test('cli.init should pass null options if flags are empty', function nullOptions(t) {
-  var scotty = sinon.stub();
-  var mockCli = {
+  const scotty = sinon.stub();
+  const mockCli = {
     input: ['test', 'arg1', 'arg2'],
     flags: {}
   };
 
-  cli.__set__({
-    cli: mockCli
-  });
-  cli.init(scotty);
+  cli.init(scotty, mockCli);
   t.deepEqual(scotty.args[0], [
     mockCli.input[0],
     mockCli.input.slice(1),
@@ -45,18 +39,15 @@ test('cli.init should pass null options if flags are empty', function nullOption
 });
 
 test('cli.init should show help when no commands passed', function showHelp(t) {
-  var scotty = sinon.stub();
-  var helpStub = sinon.stub();
-  var mockCli = {
+  const scotty = sinon.stub();
+  const helpStub = sinon.stub();
+  const mockCli = {
     input: [],
     flags: {},
     showHelp: helpStub
   };
 
-  cli.__set__({
-    cli: mockCli
-  });
-  cli.init(scotty);
+  cli.init(scotty, mockCli);
   t.assert(helpStub.calledOnce);
   t.end();
 });
