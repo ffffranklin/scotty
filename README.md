@@ -15,13 +15,12 @@
 
 The Scotty CLI is used to manage Git repositories remotely from the command line
 
-## FYIs
+## Dependencies
 
- * **Synology Diskstation:**  This utility was originaly made to support a workflow that uses the Git Server Add-on for Synology's diskstation.  Now there's no reason it shouldn't work for a vanilla remotely hosted Git Server; I'm just sayin'.
+ * SSH
+ * Git Server
 
 ## Installation
-
-The NPM package requires that you have ssh installed as it depends on it heavily.  It also depends on environment variables for your Git Server.
 
  1. Install the NPM package
  ```
